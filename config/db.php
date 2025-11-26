@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',//classe pour gerer la connexion a la bdd
-    'dsn' => 'pgsql:host=pedago01c;port=5432;dbname=fredouil',
+    'dsn' => 'pgsql:host=pedago01c;port=5433;dbname=fredouil',
     'username' => 'uapv2500230',
     'password' => '8CQn2s',
     'charset' => 'utf8',
