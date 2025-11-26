@@ -2,6 +2,11 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use app\models\internaute;
+use app\models\reservation;
+use app\models\trajet;
+use app\models\typevehicule;
+use app\models\marquevehicule;
 
 class voyage extends ActiveRecord{
 
