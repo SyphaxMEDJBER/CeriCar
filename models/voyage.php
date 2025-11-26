@@ -38,6 +38,11 @@ class voyage extends ActiveRecord{
     return $this->hasOne(marquevehicule::class,['id'=>'imarquev']);
   }
 
+  public function getVoyagesByTrajetId($idTrajet){
+    return self::findAll(['trajet'=>$idTrajet]);
+
+  }
+
 
 
 

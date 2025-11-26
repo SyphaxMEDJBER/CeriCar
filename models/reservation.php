@@ -23,6 +23,11 @@ class reservation extends ActiveRecord{
   }
 
 
+  public function getReservationsByVoyageId($idVoyage){
+    return self::findAll(['voyage'=>$idVoyage]);
+  }
+
+
 
 
 

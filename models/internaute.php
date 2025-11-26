@@ -27,6 +27,13 @@ class internaute extends ActiveRecord{
 
 
 
+  public function getUserByIdentifiant($pseudo){
+    return self::findOne(['pseudo'=>$pseudo]);
+  }
+}
+
+
+
 
 
 

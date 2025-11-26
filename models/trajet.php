@@ -14,21 +14,13 @@ class trajet extends ActiveRecord{
   public function getVoyages(){
     return $this->hasMany(voyage::class,['trajet'=>'id']);
   }
-}
 
 
+  public function getTrajet($villedep,$villearr){
+    return self::findOne(['depart'=>$villedep,'arrivee'=>$villearr]);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
+  
 
 
 
