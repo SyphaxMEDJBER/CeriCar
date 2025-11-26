@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
+    'class' => 'yii\db\Connection',//classe pour gerer la connexion a la bdd
+    'dsn' => 'pgsql:host=pedago01c;port=5432;dbname=fredouil',
+    'username' => 'uapv2500230',
+    'password' => '8CQn2s',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)
