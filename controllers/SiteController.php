@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\internaute;
 
 class SiteController extends Controller
 {
@@ -125,4 +126,28 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+
+
+
+    public function actionTest(){
+        $pseudo="Fourmi";
+
+        $user=internaute::getUserByIdentifiant($pseudo);
+
+        return $this->render('test',['user'=>$user]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

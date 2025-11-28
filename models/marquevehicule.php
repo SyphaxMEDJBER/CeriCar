@@ -3,7 +3,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
-usee app\models\voyage;
+use app\models\voyage;
 
 class marquevehicule extends ActiveRecord{
   public static function tableName(){

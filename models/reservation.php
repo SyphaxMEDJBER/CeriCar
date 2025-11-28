@@ -1,7 +1,7 @@
 <?php
 
 
-namspace app\models;
+namespace app\models;
 
 use yii\db\ActiveRecord;
 use app\models\voyage;
@@ -15,15 +15,15 @@ class reservation extends ActiveRecord{
   }
 
   public function getVoyage(){
-    return $this->hasOne(voyage::class,['voyage'=>'id']);
+    return $this->hasOne(voyage::class,['id'=>'voyage']);
   }
 
   public function getReserveur(){
-    return $this-> hasOne(internaute::class,['voyageur'=>'id']);
+    return $this-> hasOne(internaute::class,['id'=>'voyageur']);
   }
 
 
-  public function getReservationsByVoyageId($idVoyage){
+  public static function getReservationsByVoyageId($idVoyage){
     return self::findAll(['voyage'=>$idVoyage]);
   }
 

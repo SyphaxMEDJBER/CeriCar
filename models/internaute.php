@@ -16,7 +16,7 @@ class internaute extends ActiveRecord{
     //['clé_étrangère_dans_reservation' => 'clé_locale_dans_internaute']
     //un internaute peut avoir plusieurs réservations
     public function getReservations(){
-      return $this->hasMany(reservation::class ,['voyageur'=>'id'])
+      return $this->hasMany(reservation::class ,['voyageur'=>'id']);
     }
 
 
@@ -27,7 +27,7 @@ class internaute extends ActiveRecord{
 
 
 
-  public function getUserByIdentifiant($pseudo){
+  public static function getUserByIdentifiant($pseudo){
     return self::findOne(['pseudo'=>$pseudo]);
   }
 }
@@ -41,7 +41,7 @@ class internaute extends ActiveRecord{
 
 
 
-}
+
 
 
 

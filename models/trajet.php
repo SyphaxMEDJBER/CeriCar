@@ -16,11 +16,11 @@ class trajet extends ActiveRecord{
   }
 
 
-  public function getTrajet($villedep,$villearr){
+  public static function getTrajet($villedep,$villearr){
     return self::findOne(['depart'=>$villedep,'arrivee'=>$villearr]);
   }
 
-  
+}
 
 
 
