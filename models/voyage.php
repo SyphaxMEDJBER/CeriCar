@@ -26,7 +26,7 @@ class voyage extends ActiveRecord{
   //   return $this->hasMany(internaute::class,[''])
   // }
 
-  public function getTrajet(){
+  public function getTrajetObj(){
     return $this->hasOne(trajet::class,['id'=>'trajet']);
   }
 

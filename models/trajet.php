@@ -20,6 +20,12 @@ class trajet extends ActiveRecord{
     return self::findOne(['depart'=>$villedep,'arrivee'=>$villearr]);
   }
 
+  public static function getTrajetById($idTrajet){
+    return self::findOne(['id'=>$idTrajet]);
+  }
+
+
+
 }
 
 
@@ -28,3 +34,12 @@ class trajet extends ActiveRecord{
 
 
 ?>
+
+
+
+
+
+
+
+
+
