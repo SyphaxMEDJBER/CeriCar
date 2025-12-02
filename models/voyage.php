@@ -14,7 +14,7 @@ class voyage extends ActiveRecord{
     return 'fredouil.voyage';
   }
 
-  public function getConducteur(){
+  public function getConducteurObj(){
     return $this->hasOne(internaute::class,['id'=>'conducteur']);
   }
 

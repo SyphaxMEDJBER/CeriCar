@@ -14,7 +14,7 @@ class reservation extends ActiveRecord{
     return 'fredouil.reservation';
   }
 
-  public function getVoyage(){
+  public function getVoyageObj(){
     return $this->hasOne(voyage::class,['id'=>'voyage']);
   }
 

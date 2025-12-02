@@ -34,6 +34,47 @@
 
 
 
+  <?php if (count($user->reservations) > 0): ?>
+    <?php foreach ($user->reservations as $r): ?>
+      <?php $v = $r->voyageObj; ?>
+
+      <?php if ($v && $v->trajetObj): ?>
+        <h3>Réservation n° <?= $r->id ?> (<?= $r->nbplaceresa ?> place(s))</h3>
+
+        <p>Trajet :
+          <?= $v->trajetObj->depart ?>
+          → <?= $v->trajetObj->arrivee ?>
+          (<?= $v->trajetObj->distance ?> km)
+        </p>
+
+        <p>Conducteur :
+          <?= $v->conducteurObj->prenom ?? '' ?>
+          <?= $v->conducteurObj->nom ?? '' ?>
+        </p>
+
+        <p>Véhicule :
+          <?= $v->marqueVehicule->marquev ?? '' ?>
+          – <?= $v->typeVehicule->typev ?? '' ?>
+        </p>
+
+        <p>Tarif : <?= $v->tarif ?> € / place</p>
+        <hr>
+      <?php else: ?>
+        <p>Voyage ou trajet introuvable pour la réservation <?= $r->id ?></p>
+      <?php endif; ?>
+
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p>Aucune réservation pour cet internaute.</p>
+  <?php endif; ?>
+
+
+
+
+
+
+
+
   
 <?php else: ?>
   <p>aucun internaute trouvé .</p>

@@ -131,7 +131,7 @@ class SiteController extends Controller
 
 
     public function actionTest(){
-        $pseudo="Fourmi";
+        $pseudo="Loup";
 
         $user=internaute::getUserByIdentifiant($pseudo);
 
