@@ -12,7 +12,8 @@
   <?php if($user->permis && count($user->voyages)>0):?> 
     <?php foreach($user->voyages as $v): ?>
       <p><h3>id voyage: <?=$v->id ?></h3></p>
-      <p>tarif <?=$v->tarif ?>$</p>
+      <p>tarif  <?=$v->tarif ?>$</p>
+      <p>tarif totale  <?=$v->tarif * $v->trajetObj->distance ?>$</p>
       <p>nombre de places dispo: <?=$v->nbplacedispo?></p>
       <p>nombre de bagages: <?=$v->nbbagage?></p>
       <p>heure de depart: <?=$v->heuredepart?>h</p>
@@ -20,6 +21,8 @@
 
       <p>ville de depart: <?=$v->trajetObj->depart?></p>
       <p>ville d'arrivée: <?=$v->trajetObj->arrivee?></p>
+      <p>distance: <?=$v->trajetObj->distance?>km</p>
+
       <p>type vehicule: <?=$v->typeVehicule->typev?></p>
       <p>marque vehicule: <?=$v->marqueVehicule->marquev?></p>
       
