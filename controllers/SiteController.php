@@ -130,10 +130,11 @@ class SiteController extends Controller
 
 
 
-    public function actionTest(){
+    public function actionTest($pseudo =null){
         $pseudo="Loup";
 
         $user=internaute::getUserByIdentifiant($pseudo);
+
 
         return $this->render('test',['user'=>$user]);   // charge la vue test.php, injecte la variable $user et construit la page html 
     }
