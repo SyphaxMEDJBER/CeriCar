@@ -65,3 +65,37 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
     <?= Html::endForm() ?>
 </div>
+
+
+
+<h2 id="tp">Trajets populaires</h2>
+
+<div class="popular-container">
+
+    <div class="popular-card">
+        <img src=<?= Url::to('@web/images/paris.jpg') ?> alt="Paris">
+        <div class="card-info">
+            <h3>Marseille → Paris</h3>
+            <span class="price">100 $</span>
+        </div>
+    </div>
+
+    <div class="popular-card">
+        <img src=<?= Url::to('@web/images/avignon.jpg') ?> alt="Avignon">
+        <div class="card-info">
+            <h3>Montpellier → Avignon</h3>
+            <span class="price">100 $</span>
+        </div>
+    </div>
+
+    <div class="popular-card">
+        <img src=<?= Url::to('@web/images/toulouse.jpg') ?> alt="Toulouse">
+        <div class="card-info">
+            <h3>Lyon → Toulousee</h3>
+            <span class="price">100 $</span>
+        </div>
+    </div>
+
+</div>
+
+

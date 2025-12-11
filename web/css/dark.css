@@ -208,3 +208,78 @@ input:focus {
 
 
 
+
+/* ===== TRAJETS POPULAIRES ===== */
+
+.popular-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 60px 0;
+}
+
+.popular-card {
+    position: relative;
+    width: 330px;
+    height: 330px;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 0, 30, 0.15);
+}
+
+.popular-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.4s ease;
+}
+
+/* Overlay rouge au hover */
+.popular-card:hover img {
+    filter: blur(4px) brightness(40%);
+    transform: scale(1.05); /* léger zoom pour plus d’élégance */
+}
+
+/* Texte au-dessus */
+.card-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: #fff;
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.4s ease;
+}
+
+.popular-card:hover .card-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-info h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.card-info .price {
+    background: #ff0033;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+
+#tp{
+    margin-top: 180px;
+    color: #ff0033;
+    border-left: #ff0033 solid 10px;
+    padding-left: 20px;
+}
+
+
