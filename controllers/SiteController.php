@@ -141,7 +141,11 @@ class SiteController extends Controller
 
 
 
-
+public function actionSignup()
+        {
+            $model = new \app\models\SignupForm();   // même vide c’est OK
+            return $this->render('signup', ['model' => $model]);
+        }
 
 
 
