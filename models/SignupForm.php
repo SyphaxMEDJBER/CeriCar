@@ -18,12 +18,12 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            // on remplira ensemble après
+            // on remplira après
         ];
     }
 
     public function signup()
     {
-        // on remplira ensemble après
+        // on remplira après
     }
 }

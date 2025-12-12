@@ -17,11 +17,11 @@ $this->title = Html::encode('Créer un compte');
 
 
 
-<div class="signup-wrapper">
+<div class="login-wrapper">
 
-    <div class="signup-card">
-      <h1 class="signup-title"><?= Html::encode($this->title)?></h1>
-      <p class="signup-sub">Veuillez remplir les champs ci-dessous :</p>
+    <div class="login-card">
+      <h1 class="login-title"><?= Html::encode($this->title)?></h1>
+      <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
       <?php $form=ActiveForm::begin([
         'id'=>'signup-form',
         'fieldConfig'=> [
@@ -52,8 +52,8 @@ $this->title = Html::encode('Créer un compte');
 
       <div class="form-group mt-3">
                 <?= Html::submitButton('Créer un compte', [
-                    'class' => 'btn btn-signup',
-                    'name' => 'signup-button'
+                    'class' => 'btn btn-login',
+                    'name' => 'login-button'
                 ]) ?>
       </div>
       <?php ActiveForm::end();  ?>

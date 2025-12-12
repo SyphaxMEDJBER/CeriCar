@@ -21,8 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php $form = ActiveForm::begin([ //un tableau d'option que yii utilise pour configurer le formulaire 
             'id' => 'login-form',//un identifiant 
             'fieldConfig' => [
-                'template' => "{label}\n{input}\n{error}",
-                'labelOptions' => ['class' => 'form-label login-label'],
+                'template' => "{input}\n{error}",
                 'inputOptions' => ['class' => 'form-control input-dark'],
                 'errorOptions' => ['class' => 'invalid-feedback'],
             ],

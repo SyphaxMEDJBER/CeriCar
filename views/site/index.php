@@ -16,7 +16,7 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
     <!-- IMAGE À DROITE -->
     <div class="hero-img">
-        <img src="<?= Url::to('@web/images/hero.png') ?>" alt="car">
+        <img src="<?= Url::to('@web/images/hero2.png') ?>" alt="car">
 
     </div>
 

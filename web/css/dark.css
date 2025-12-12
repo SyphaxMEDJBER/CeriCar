@@ -310,21 +310,21 @@ input:focus {
 .login-card {
     background: #0c0c0c;
     padding: 40px 45px;
-    width: 420px;
+    width: 700px;
     border-radius: 18px;
 
     /* Shadow premium */
     box-shadow: 0 0 25px  #159692;
     border: 1px solid #1e1e1e;
 
-    text-align: left;
+    text-align: center;
 }
 
 /* TITLE ALIGNÉ AVEC CARD */
 .login-title {
     font-size: 2rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #159692;
     margin-bottom: 10px;
     text-shadow: 0 0 10px  #159692;
 }
@@ -335,25 +335,29 @@ input:focus {
     margin-bottom: 25px;
 }
 
-/* LABELS */
-.login-label {
-    color: #ddd;
-    margin-bottom: 6px;
-}
+
 
 /* INPUTS */
 .input-dark {
     background: #111 !important;
     border: 1px solid #333 !important;
     padding: 12px 15px !important;
-    border-radius: 12px !important;
+    border-radius: 30px !important;
     color: #fff !important;
     transition: .2s;
+    
+    
 }
 
 .input-dark:focus {
     border-color:  #159692 !important;
     box-shadow: 0 0 10px  #159692 !important;
+}
+
+
+
+.input-dark::placeholder{
+    color: #1596925f;
 }
 
 /* CHECKBOX */
