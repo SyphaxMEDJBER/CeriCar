@@ -6,66 +6,66 @@ app\assets\AppAsset::register($this);
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="<?= Yii::$app->charset ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?= Html::encode($this->title) ?> – CeriCar</title>
+        <title><?= Html::encode($this->title) ?> – CeriCar</title>
 
-    <?php $this->head() ?>
+        <?php $this->head() ?>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- DARK THEME -->
-     <link rel="stylesheet" href="<?= Url::to('@web/css/dark.css') ?>">
+        <!-- DARK THEME -->
+        <link rel="stylesheet" href="<?= Url::to('@web/css/dark.css') ?>">
 
-</head>
+    </head>
 
-<body>
-<?php $this->beginBody() ?>
+    <body>
+        <?php $this->beginBody() ?>
 
-<!-- NOTIFICATION -->
-<div id="notif"></div>
+        <!-- NOTIFICATION -->
+        <div id="notif"></div>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg px-4">
-    <a class="navbar-brand" href="<?= Url::to(['site/index']) ?>">CeriCar</a>
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg px-4">
+            <a class="navbar-brand" href="<?= Url::to(['site/index']) ?>">CeriCar</a>
 
-    <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/index']) ?>">Accueil</a></li>
-            <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/recherche']) ?>">Rechercher</a></li>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/index']) ?>">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/recherche']) ?>">Rechercher</a></li>
 
-            <?php if (Yii::$app->user->isGuest): ?>
-                <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/login']) ?>">Connexion</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/signup']) ?>">Inscription</a></li>
-            <?php else: ?>
-                <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/profil']) ?>">Mon Profil</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/logout']) ?>" data-method="post">Déconnexion</a></li>
-            <?php endif; ?>
-        </ul>
-    </div>
-</nav>
+                    <?php if (Yii::$app->user->isGuest): ?>
+                        <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/login']) ?>">Connexion</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/signup']) ?>">Inscription</a></li>
+                    <?php else: ?>
+                        <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/profil']) ?>">Mon Profil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/logout']) ?>" data-method="post">Déconnexion</a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        </nav>
 
-<!-- CONTENU -->
-<div class="container py-5">
-    <?= $content ?>
-</div>
+        <!-- CONTENU -->
+        <div class="container py-5">
+            <?= $content ?>
+        </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-    <p>CeriCar © <?= date('Y') ?> — Mobilité nouvelle génération</p>
-</footer>
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>CeriCar © <?= date('Y') ?> — Mobilité nouvelle génération</p>
+        </footer>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<?php $this->endBody() ?>
-</body>
+        <?php $this->endBody() ?>
+    </body>
 </html>
 <?php $this->endPage() ?>

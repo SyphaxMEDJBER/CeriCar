@@ -17,7 +17,7 @@ body {
     z-index: 999;
     background: #000;
     border-bottom: 1px solid #222;
-    box-shadow: 0 0 15px rgba(255, 0, 30, 0.4);
+    box-shadow: 0 0 15px  #159692;
 }
 
 .navbar-nav{
@@ -44,7 +44,7 @@ body {
 
 .navbar-brand {
     font-weight: 700;
-    color: #ff0033 !important;
+    color:  #159692 !important;
     letter-spacing: .5px;
 }
 
@@ -55,7 +55,7 @@ body {
     width: 25%;
 }
 .nav-link:hover {
-    color: #ff0033 !important;
+    color:  #159692 !important;
 }
 
 /* FOOTER */
@@ -66,7 +66,7 @@ body {
     color: #666;
     font-size: 0.9rem;
     border-top: 1px solid #222;
-    box-shadow: 0 -5px 25px rgba(255, 0, 30, 0.25);
+    box-shadow: 0 -5px 25px  #159692
 }
 
 /* HERO SECTION — VERSION OPTIMISÉE */
@@ -86,7 +86,7 @@ body {
 .hero-text h1 {
     font-size: 3rem;
     font-weight: 800;
-    color: #ff0033;
+    color:  #159692;
 }
 
 .hero-text p {
@@ -111,7 +111,7 @@ body {
     border-radius: 50px;
     display: flex;
     gap: 12px;
-    box-shadow: 0 0 20px rgba(255, 0, 30, .3);
+    box-shadow: 0 0 20px  #159692
     align-items: center;
 }
 
@@ -137,15 +137,15 @@ body {
 
 /* Focus glow rouge */
 .search-bar .form-control:focus {
-    border: 1px solid #ff0033 !important;
-    box-shadow: 0 0 10px rgba(255, 0, 50, 0.4) !important;
+    border: 1px solid  #159692 !important;
+    box-shadow: 0 0 10px  #159692 !important;
 }
 
 /* Bouton */
 .search-bar button {
     border-radius: 30px !important;
     padding: 12px 25px !important;
-    background: #ff0033 !important;
+    background:  #159692 !important;
     font-weight: 600 !important;
     height: 48px !important;
     border: none !important;
@@ -201,8 +201,8 @@ input[type="number"]:focus {
 
 .form-control:focus,
 input:focus {
-    border: 1px solid #ff0033 !important;
-    box-shadow: 0 0 10px rgba(255,0,50,0.5) !important;
+    border: 1px solid  #159692 !important;
+    box-shadow: 0 0 10px  #159692 !important;
 }
 
 
@@ -226,7 +226,7 @@ input:focus {
     overflow: hidden;
     cursor: pointer;
     transition: 0.3s ease;
-    box-shadow: 0 0 20px rgba(255, 0, 30, 0.15);
+    box-shadow: 0 0 20px  #159692
 }
 
 .popular-card img {
@@ -266,7 +266,7 @@ input:focus {
 }
 
 .card-info .price {
-    background: #ff0033;
+    background:  #159692;
     padding: 6px 15px;
     border-radius: 20px;
     font-weight: bold;
@@ -277,9 +277,110 @@ input:focus {
 
 #tp{
     margin-top: 180px;
-    color: #ff0033;
-    border-left: #ff0033 solid 10px;
+    color:  #159692;
+    border-left:  #159692 solid 10px;
     padding-left: 20px;
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* page login */
+/* WRAPPER */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-top: 140px;
+    padding-bottom: 80px;
+}
+
+/* CARD */
+.login-card {
+    background: #0c0c0c;
+    padding: 40px 45px;
+    width: 420px;
+    border-radius: 18px;
+
+    /* Shadow premium */
+    box-shadow: 0 0 25px  #159692;
+    border: 1px solid #1e1e1e;
+
+    text-align: left;
+}
+
+/* TITLE ALIGNÉ AVEC CARD */
+.login-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px  #159692;
+}
+
+/* SOUS-TITRE */
+.login-sub {
+    color: #aaa;
+    margin-bottom: 25px;
+}
+
+/* LABELS */
+.login-label {
+    color: #ddd;
+    margin-bottom: 6px;
+}
+
+/* INPUTS */
+.input-dark {
+    background: #111 !important;
+    border: 1px solid #333 !important;
+    padding: 12px 15px !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    transition: .2s;
+}
+
+.input-dark:focus {
+    border-color:  #159692 !important;
+    box-shadow: 0 0 10px  #159692 !important;
+}
+
+/* CHECKBOX */
+.remember-check {
+    color: #ccc !important;
+}
+
+/* BUTTON */
+.btn-login {
+    width: 100%;
+    padding: 12px 0;
+    background: #159692;
+    border-radius: 12px;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    transition: .2s ease;
+}
+
+.btn-login:hover {
+    background:  #159692;
+}
+
+
+
+
+
+
+
+/* page login */
