@@ -99,3 +99,21 @@ $this->title = "CeriCar – Trouvez votre voyage";
 </div>
 
 
+
+
+<div class="container hero">
+
+    <!-- TEXTE À GAUCHE -->
+    <div class="hero-text">
+        <h1>Le réseau du covoiturage<br> nouvelle génération</h1>
+        <p>Chaque jour, des milliers de routes s’illuminent.<br>
+            Nous connectons les voyageurs sur tout le territoire pour des trajets sûrs, rapides et économiques.</p>
+    </div>
+
+    <!-- IMAGE À DROITE -->
+    <div class="hero-img">
+        <img src="<?= Url::to('@web/images/france.png') ?>" alt="car">
+
+    </div>
+
+</div>
