@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\internaute;
+use app\models\trajet;
 
 class SiteController extends Controller
 {
@@ -62,7 +63,14 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+            $vdep= trajet::getDepart();
+            $varr= trajet::getArrivee();
+
+            return $this->render('index', [
+                    'vdep'  => $vdep,
+                    'varr' => $varr,
+                ]);
+                    
     }
 
     /**
@@ -146,6 +154,26 @@ public function actionSignup()
             $model = new \app\models\SignupForm();   // même vide c’est OK
             return $this->render('signup', ['model' => $model]);
         }
+
+
+
+// public function recherche(){
+//     //recuperation des données envoyées
+//     $depart = Yii::$app->request->get('depart');//app est l'objet qui represente l'application Yii , request c la requette http,
+//     $arrivee = Yii::$app->request->get('arrivee');//get n'est pas une mauvaise pratique dans la recherche
+//     $nb = Yii::$app->request->get('nb');
+
+//     return this->render('recherche',[
+//         'depart'=>$depart,
+//         'arrivee'=>$arrivee,
+//         'nb'=>$nb
+//     ]);
+
+// }
+
+
+
+
 
 
 

@@ -25,6 +25,19 @@ class trajet extends ActiveRecord{
   }
 
 
+  public static function getDepart(){//pour la search bar
+    return self::find()->select('depart')
+        ->distinct()
+        ->column();// pour retourner un tableau et pas un objet 
+  }
+
+  public static function getArrivee(){// pour la search bar
+    return self::find()->select('arrivee')
+    ->distinct()
+    ->column();
+  }
+
+
 
 }
 

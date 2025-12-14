@@ -24,19 +24,20 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
 <!-- BARRE DE RECHERCHE HORIZONTALE -->
 <div class="container">
-    <?= Html::beginForm('#', 'post', ['class' => 'search-bar']) ?>
+    <?= Html::beginForm('recherche', 'get', ['class' => 'search-bar']) ?>
 
         <!-- Ville de départ -->
+
         <input type="text" 
+               name="depart" 
                list="villesDepart" 
                class="form-control search-input" 
                placeholder="Ville de départ">
         <datalist id="villesDepart">
-            <option value="Toulouse">
-            <option value="Montpellier">
-            <option value="Marseille">
-            <option value="Paris">
-            <option value="Nice">
+            <?php foreach($vdep as $v):?>
+                <option value="<?=Html::encode($v)?>">
+            <?php endforeach;?>
+    
         </datalist>
 
         <!-- Ville d'arrivée -->
@@ -45,11 +46,10 @@ $this->title = "CeriCar – Trouvez votre voyage";
                class="form-control search-input" 
                placeholder="Ville d’arrivée">
         <datalist id="villesArrivee">
-            <option value="Paris">
-            <option value="Lyon">
-            <option value="Nice">
-            <option value="Marseille">
-            <option value="Toulouse">
+            <?php foreach($varr as $v):?>
+                <option value="<?=Html::encode($v)?>">
+            <?php endforeach;?>
+
         </datalist>
 
         <!-- Nombre de voyageurs -->
