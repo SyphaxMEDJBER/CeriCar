@@ -1,17 +1,14 @@
 <?php
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 $this->title = "Recherche de voyage";
 ?>
 
-<!-- BARRE DE RECHERCHE (IDENTIQUE À LA HOME) -->
+<!-- BARRE DE RECHERCHE -->
 <div class="container">
     <?= Html::beginForm(['site/recherche'], 'post', ['class' => 'search-bar']) ?>
 
-        <input type="text"
-               name="depart"
-               list="villesDepart"
+        <input type="text" name="depart" list="villesDepart"
                class="form-control search-input"
                placeholder="Ville de départ"
                value="<?= Html::encode($depart ?? '') ?>">
@@ -22,9 +19,7 @@ $this->title = "Recherche de voyage";
             <?php endforeach; ?>
         </datalist>
 
-        <input type="text"
-               name="arrivee"
-               list="villesArrivee"
+        <input type="text" name="arrivee" list="villesArrivee"
                class="form-control search-input"
                placeholder="Ville d’arrivée"
                value="<?= Html::encode($arrivee ?? '') ?>">
@@ -35,8 +30,7 @@ $this->title = "Recherche de voyage";
             <?php endforeach; ?>
         </datalist>
 
-        <input type="number"
-               name="voyageurs"
+        <input type="number" name="voyageurs"
                class="form-control search-input"
                min="1" max="10"
                placeholder="Voyageurs"
@@ -50,36 +44,51 @@ $this->title = "Recherche de voyage";
 </div>
 
 <!-- RÉSULTATS -->
-<div class="container mt-4">
+<div class="row g-4 mt-4">
+<?php foreach ($resultats as $r): ?>
+    <div class="col-md-6 col-lg-4">
 
-<?php if (!empty($resultats)): ?>
+        <!-- LA CARTE EST FLEX -->
+        <div class="card search-card h-100 d-flex flex-column <?= $r['complet'] ? 'card-complet' : '' ?>">
 
-    <h2>Résultats pour <?= $nb ?> voyageurs</h2>
+            <!-- CONTENU -->
+            <div class="card-body">
 
-    <?php foreach ($resultats as $r): ?>
-        <div class="result-card <?= $r['complet'] ? 'complet' : 'disponible' ?>">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0"><?= Html::encode($r['conducteur']) ?></h5>
 
-            <p><strong>Conducteur :</strong> <?= Html::encode($r['conducteur']) ?></p>
+                    <?php if ($r['complet']): ?>
+                        <span class="badge badge-complet">COMPLET</span>
+                    <?php else: ?>
+                        <span class="badge badge-dispo">
+                            DISPONIBLE (<?= $r['places'] ?>)
+                        </span>
+                    <?php endif; ?>
+                </div>
 
-            <p>
-                <?php if ($r['complet']): ?>
-                    <span class="badge bg-danger">COMPLET</span>
-                <?php else: ?>
-                    Places restantes : <?= $r['places'] ?>
+                <p class="trajet mb-2">
+                    <?= Html::encode($depart) ?> → <?= Html::encode($arrivee) ?>
+                </p>
+
+                <p class="mb-1">🕒 Départ : <strong><?= Html::encode($r['heure']) ?> h</strong></p>
+                <p class="mb-1">🚗 <?= Html::encode($r['marque']) ?> – <?= Html::encode($r['type']) ?></p>
+                <p class="mb-2">🎒 Bagages : <?= Html::encode($r['bagages']) ?></p>
+
+                <?php if (!empty($r['contraintes'])): ?>
+                    <div class="contrainte-line mt-2">
+                        ⚠️ <?= Html::encode($r['contraintes']) ?>
+                    </div>
                 <?php endif; ?>
-            </p>
 
-            <p><strong>Prix total :</strong> <?= $r['prix'] ?> €</p>
+            </div>
+
+            <!-- FOOTER TOUJOURS EN BAS -->
+            <div class="card-footer text-end mt-auto">
+                <span class="price"><?= number_format($r['prix'], 2) ?> €</span>
+            </div>
 
         </div>
-    <?php endforeach; ?>
 
-<?php elseif ($depart): ?>
-
-    <div class="alert alert-warning">
-        Aucun voyage trouvé pour <?= Html::encode("$depart → $arrivee") ?>
     </div>
-
-<?php endif; ?>
-
+<?php endforeach; ?>
 </div>

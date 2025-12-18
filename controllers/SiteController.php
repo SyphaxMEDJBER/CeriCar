@@ -158,13 +158,11 @@ public function actionSignup()
 
 
 
-
-
 public function actionRecherche()
 {
     $request = Yii::$app->request;
 
-    // données pour les listes déroulantes
+    // données pour les listes
     $vdep = trajet::getDepart();
     $varr = trajet::getArrivee();
 
@@ -188,10 +186,8 @@ public function actionRecherche()
 
             foreach ($voyages as $v) {
 
-                // 3. capacité totale suffisante ?
-                if ($v->nbplacedispo < $nb) {
-                    continue;
-                }
+                // 3. capacité véhicule suffisante
+                if ($v->nbplacedispo < $nb) continue;
 
                 // 4. places restantes
                 $placesRestantes = $v->getPlacesRestantes();
@@ -203,12 +199,36 @@ public function actionRecherche()
                 $prixTotal = $trajet->distance * $v->tarif * $nb;
 
                 $resultats[] = [
-                    'conducteur' => $v->conducteurObj->prenom,
-                    'places'     => $placesRestantes,
-                    'complet'    => $complet,
-                    'prix'       => $prixTotal
+                    'conducteur'  => $v->conducteurObj->prenom,
+                    'places'      => $placesRestantes,
+                    'complet'     => $complet,
+                    'prix'        => $prixTotal,
+                    'heure'       => $v->heuredepart,
+                    'marque'      => $v->marqueVehicule->marquev,
+                    'type'        => $v->typeVehicule->typev,
+                    'bagages'     => $v->nbbagage,
+                    'contraintes' => $v->contraintes
                 ];
             }
+
+            // NOTIFICATION
+            if (empty($resultats)) {
+                Yii::$app->session->setFlash('notif', [
+                    'type' => 'warning',
+                    'message' => 'Aucun voyage disponible pour ce trajet.'
+                ]);
+            } else {
+                Yii::$app->session->setFlash('notif', [
+                    'type' => 'success',
+                    'message' => count($resultats) . ' voyage(s) trouvé(s).'
+                ]);
+            }
+
+        } else {
+            Yii::$app->session->setFlash('notif', [
+                'type' => 'danger',
+                'message' => 'Trajet introuvable.'
+            ]);
         }
     }
 
@@ -221,13 +241,6 @@ public function actionRecherche()
         'nb'        => $nb
     ]);
 }
-
-
-
-
-
-
-
 
 
 
