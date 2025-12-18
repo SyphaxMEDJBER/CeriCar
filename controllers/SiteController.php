@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\internaute;
 use app\models\trajet;
+use app\models\voyage;
 
 class SiteController extends Controller
 {
@@ -157,27 +158,89 @@ public function actionSignup()
 
 
 
-// public function recherche(){
-//     //recuperation des données envoyées
-//     $depart = Yii::$app->request->get('depart');//app est l'objet qui represente l'application Yii , request c la requette http,
-//     $arrivee = Yii::$app->request->get('arrivee');//get n'est pas une mauvaise pratique dans la recherche
-//     $nb = Yii::$app->request->get('nb');
+public function actionRecherche()
+{
+    $request = Yii::$app->request;
 
-//     return this->render('recherche',[
-//         'depart'=>$depart,
-//         'arrivee'=>$arrivee,
-//         'nb'=>$nb
-//     ]);
+    // données pour les listes
+    $vdep = trajet::getDepart();
+    $varr = trajet::getArrivee();
 
-// }
+    $resultats = [];
+    $depart = $arrivee = null;
+    $nb = null;
 
+    if ($request->isPost) {
 
+        $depart = $request->post('depart');
+        $arrivee = $request->post('arrivee');
+        $nb = (int)$request->post('voyageurs');
 
+        // 1. trouver le trajet
+        $trajet = trajet::getTrajet($depart, $arrivee);
 
+        if ($trajet) {
 
+            // 2. récupérer les voyages du trajet
+            $voyages = voyage::getVoyagesByTrajetId($trajet->id);
 
+            foreach ($voyages as $v) {
 
+                // 3. capacité véhicule suffisante
+                if ($v->nbplacedispo < $nb) continue;
 
+                // 4. places restantes
+                $placesRestantes = $v->getPlacesRestantes();
+
+                // 5. statut
+                $complet = ($placesRestantes < $nb);
+
+                // 6. coût total
+                $prixTotal = $trajet->distance * $v->tarif * $nb;
+
+                $resultats[] = [
+                    'conducteur'  => $v->conducteurObj->prenom,
+                    'places'      => $placesRestantes,
+                    'complet'     => $complet,
+                    'prix'        => $prixTotal,
+                    'heure'       => $v->heuredepart,
+                    'marque'      => $v->marqueVehicule->marquev,
+                    'type'        => $v->typeVehicule->typev,
+                    'bagages'     => $v->nbbagage,
+                    'contraintes' => $v->contraintes
+                ];
+            }
+
+            // NOTIFICATION
+            if (empty($resultats)) {
+                Yii::$app->session->setFlash('notif', [
+                    'type' => 'warning',
+                    'message' => 'Aucun voyage disponible pour ce trajet.'
+                ]);
+            } else {
+                Yii::$app->session->setFlash('notif', [
+                    'type' => 'success',
+                    'message' => count($resultats) . ' voyage(s) trouvé(s).'
+                ]);
+            }
+
+        } else {
+            Yii::$app->session->setFlash('notif', [
+                'type' => 'danger',
+                'message' => 'Trajet introuvable.'
+            ]);
+        }
+    }
+
+    return $this->render('recherche', [
+        'vdep'      => $vdep,
+        'varr'      => $varr,
+        'resultats' => $resultats,
+        'depart'    => $depart,
+        'arrivee'   => $arrivee,
+        'nb'        => $nb
+    ]);
+}
 
 
 
