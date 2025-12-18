@@ -29,28 +29,7 @@ class reservation extends ActiveRecord{
 
 
 
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

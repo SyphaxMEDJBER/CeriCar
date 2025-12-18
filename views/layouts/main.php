@@ -42,8 +42,7 @@ app\assets\AppAsset::register($this);
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/index']) ?>">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/recherche']) ?>">Rechercher</a></li>
-
+                    <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/recherche']) ?>">Rechercher</a> </li>
                     <?php if (Yii::$app->user->isGuest): ?>
                         <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/login']) ?>">Connexion</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= Url::to(['site/signup']) ?>">Inscription</a></li>
@@ -71,4 +70,11 @@ app\assets\AppAsset::register($this);
         <?php $this->endBody() ?>
     </body>
 </html>
+
+
+
+
+
 <?php $this->endPage() ?>
+
+
