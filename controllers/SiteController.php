@@ -183,23 +183,26 @@ class SiteController extends Controller
 
 
                 foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
+                    if($nb<=$v->nbplacedispo){
 
-                    $placesRestantes = $v->getPlacesRestantes();//
-                    $complet = ($placesRestantes < $nb);//true si complet
+                        
+                            $placesRestantes = $v->getPlacesRestantes();//
+                        $complet = ($placesRestantes < $nb);//true si complet
 
-                    $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
+                        $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
 
-                    $resultats[] = [
-                        'conducteur'  => $v->conducteurObj->prenom,
-                        'places'      => $placesRestantes,
-                        'complet'     => $complet,
-                        'prix'        => $prixTotal,
-                        'heure'       => $v->heuredepart,
-                        'marque'      => $v->marqueVehicule->marquev,
-                        'type'        => $v->typeVehicule->typev,
-                        'bagages'     => $v->nbbagage,
-                        'contraintes' => $v->contraintes
-                    ];
+                        $resultats[] = [
+                            'conducteur'  => $v->conducteurObj->prenom,
+                            'places'      => $placesRestantes,
+                            'complet'     => $complet,
+                            'prix'        => $prixTotal,
+                            'heure'       => $v->heuredepart,
+                            'marque'      => $v->marqueVehicule->marquev,
+                            'type'        => $v->typeVehicule->typev,
+                            'bagages'     => $v->nbbagage,
+                            'contraintes' => $v->contraintes
+                        ];
+                    }
                 }
 
                 $notif = empty($resultats)//si la liste des resultats est vide
@@ -210,10 +213,10 @@ class SiteController extends Controller
                 $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];//on affiche cette notif
             }
         }
-
+        // retour de serveur
         if ($request->isAjax) {//si lappel vient dajax
             return $this->asJson([   //reponse json pas de layout
-                'html' => $this->renderPartial('_resultats', [//html partiel : que les cartes resultats
+                    'html' => $this->renderPartial('_resultats', [//html partiel : que les cartes resultats
                     'resultats' => $resultats,//donnees pour la vue partielle
                     'depart'    => $depart,//affichage du trajet sur les cartes
                     'arrivee'   => $arrivee

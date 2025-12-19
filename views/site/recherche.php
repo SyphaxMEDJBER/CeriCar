@@ -40,5 +40,9 @@ $this->title = "Recherche de voyage";
 <?= Html::endForm() ?>
 </div>
 
-<!-- CONTENEUR RÉSULTATS (OBLIGATOIRE) -->
-<div id="resultats" class="row g-4 mt-4"></div>
+ <!-- CONTENEUR RÉSULTATS -->
+<div id="resultats" class="row g-4 mt-4">
+
+
+
+</div>
