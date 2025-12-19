@@ -150,98 +150,80 @@ class SiteController extends Controller
 
 
 
-public function actionSignup()
-        {
-            $model = new \app\models\SignupForm();   // même vide c’est OK
-            return $this->render('signup', ['model' => $model]);
+    public function actionSignup()
+            {
+                $model = new \app\models\SignupForm();   // même vide c’est OK
+                return $this->render('signup', ['model' => $model]);
+            }
+
+
+
+                
+    public function actionRecherche()
+    {
+        $request = Yii::$app->request;//objet yii permet de lire post,get,ajax
+
+        $vdep = trajet::getDepart();//liste distinct des ville de dep pour la datalist
+        $varr = trajet::getArrivee();// ville arr
+
+        $resultats = [];//tableau final des vyg a afficher 
+        $depart = $arrivee = null;//valeurs saisies init
+        $nb = null;//nombre de voyageurs init
+
+        if ($request->isPost) {//on ne calcule la recherche que si on  a soumis le formulaire
+
+            $depart = $request->post('depart');//recupere la ville de dep envoyee par le form
+            $arrivee = $request->post('arrivee');//arr
+            $nb = (int)$request->post('voyageurs');//nbr de voyageurs
+
+            $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
+
+            if ($trajet) {//si le trajet existe 
+                $voyages = voyage::getVoyagesByTrajetId($trajet->id);// Récupère tous les voyages proposés pour ce trajet
+
+
+                foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
+
+                    $placesRestantes = $v->getPlacesRestantes();//
+                    $complet = ($placesRestantes < $nb);//true si complet
+
+                    $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
+
+                    $resultats[] = [
+                        'conducteur'  => $v->conducteurObj->prenom,
+                        'places'      => $placesRestantes,
+                        'complet'     => $complet,
+                        'prix'        => $prixTotal,
+                        'heure'       => $v->heuredepart,
+                        'marque'      => $v->marqueVehicule->marquev,
+                        'type'        => $v->typeVehicule->typev,
+                        'bagages'     => $v->nbbagage,
+                        'contraintes' => $v->contraintes
+                    ];
+                }
+
+                $notif = empty($resultats)//si la liste des resultats est vide
+                    ? ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.']//on affiche ca
+                    : ['type'=>'success','message'=>count($resultats).' voyage(s) trouvé(s).'];//sinon ca
+
+            } else {//si le trajet nexite pas 
+                $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];//on affiche cette notif
+            }
         }
 
-
-
-public function actionRecherche()
-{
-    $request = Yii::$app->request;
-
-    // données pour les listes
-    $vdep = trajet::getDepart();
-    $varr = trajet::getArrivee();
-
-    $resultats = [];
-    $depart = $arrivee = null;
-    $nb = null;
-
-    if ($request->isPost) {
-
-        $depart = $request->post('depart');
-        $arrivee = $request->post('arrivee');
-        $nb = (int)$request->post('voyageurs');
-
-        // 1. trouver le trajet
-        $trajet = trajet::getTrajet($depart, $arrivee);
-
-        if ($trajet) {
-
-            // 2. récupérer les voyages du trajet
-            $voyages = voyage::getVoyagesByTrajetId($trajet->id);
-
-            foreach ($voyages as $v) {
-
-                // 3. capacité véhicule suffisante
-                if ($v->nbplacedispo < $nb) continue;
-
-                // 4. places restantes
-                $placesRestantes = $v->getPlacesRestantes();
-
-                // 5. statut
-                $complet = ($placesRestantes < $nb);
-
-                // 6. coût total
-                $prixTotal = $trajet->distance * $v->tarif * $nb;
-
-                $resultats[] = [
-                    'conducteur'  => $v->conducteurObj->prenom,
-                    'places'      => $placesRestantes,
-                    'complet'     => $complet,
-                    'prix'        => $prixTotal,
-                    'heure'       => $v->heuredepart,
-                    'marque'      => $v->marqueVehicule->marquev,
-                    'type'        => $v->typeVehicule->typev,
-                    'bagages'     => $v->nbbagage,
-                    'contraintes' => $v->contraintes
-                ];
-            }
-
-            // NOTIFICATION
-            if (empty($resultats)) {
-                Yii::$app->session->setFlash('notif', [
-                    'type' => 'warning',
-                    'message' => 'Aucun voyage disponible pour ce trajet.'
-                ]);
-            } else {
-                Yii::$app->session->setFlash('notif', [
-                    'type' => 'success',
-                    'message' => count($resultats) . ' voyage(s) trouvé(s).'
-                ]);
-            }
-
-        } else {
-            Yii::$app->session->setFlash('notif', [
-                'type' => 'danger',
-                'message' => 'Trajet introuvable.'
+        if ($request->isAjax) {//si lappel vient dajax
+            return $this->asJson([   //reponse json pas de layout
+                'html' => $this->renderPartial('_resultats', [//html partiel : que les cartes resultats
+                    'resultats' => $resultats,//donnees pour la vue partielle
+                    'depart'    => $depart,//affichage du trajet sur les cartes
+                    'arrivee'   => $arrivee
+                ]),
+                'notif' => $notif ?? null// le massage pour le bondeau
             ]);
         }
+
+        return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));//appel normal sans ajax , variables injectées dans recherche.php
     }
-
-    return $this->render('recherche', [
-        'vdep'      => $vdep,
-        'varr'      => $varr,
-        'resultats' => $resultats,
-        'depart'    => $depart,
-        'arrivee'   => $arrivee,
-        'nb'        => $nb
-    ]);
-}
-
 
 
 
