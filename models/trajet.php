@@ -42,7 +42,6 @@ class trajet extends ActiveRecord{
 
 
 
-//4
   public static function chercherTrajets($depart, $arrivee)
   {
       return self::find()

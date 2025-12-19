@@ -27,7 +27,7 @@ $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]
 <body>
 <?php $this->beginBody() ?>
 
-<!-- BANDEAU NOTIFICATION (TOUJOURS PRÉSENT) -->
+<!-- BANDEAU NOTIFICATION -->
 <div id="notif" class="alert text-center m-0 d-none"></div>
 
 <!-- NAVBAR -->

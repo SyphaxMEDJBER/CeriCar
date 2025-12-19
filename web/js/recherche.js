@@ -7,7 +7,7 @@ $(function () {
       type: "POST",//type post 
       dataType: "json", //format de donnees json
       data: $(this).serialize(),// toute les valeurs saisies
-      success: function (res) { //sexecute quand http 200= le serveur a repondu correctemenet, res la reponse de controleur json
+      success: function (res) { //sexecute quand http xhr.status=200 le serveur a repondu correctemenet, res la reponse de controleur json
         $("#resultats").html(res.html);//le html généré par renderpartial(...),on replace le contenu de <div id="resultats">
 
         if (res.notif) {
@@ -20,3 +20,5 @@ $(function () {
     });
   });
 });
+
+
