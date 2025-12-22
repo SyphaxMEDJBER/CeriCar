@@ -39,10 +39,11 @@ $this->title = Html::encode('Créer un compte');
       <?= $form->field($model, 'pseudo')
           ->textInput(['placeholder' => "Pseudo"]) ?>
       <?= $form->field($model, 'mail')
-          ->textInput(['placeholder' => "Mail"]) ?>
-
+          ->textInput(['placeholder' => "Mail"]) ?>    
       <?= $form->field($model, 'permis')
-          ->input('number',['placeholder' => "Numéro De Permis"]) ?>
+          ->textInput(['placeholder' => "Numéro de permis"]) ?>
+
+
 
       <?= $form->field($model, 'photo')
             ->textInput(['placeholder' => "URL de la photo"]) ?>

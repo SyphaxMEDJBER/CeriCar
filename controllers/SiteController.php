@@ -13,6 +13,7 @@ use app\models\internaute;
 use app\models\trajet;
 use app\models\voyage;
 
+
 class SiteController extends Controller
 {
     /**
@@ -79,22 +80,39 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
+
     public function actionLogin()
     {
+        // Si l’utilisateur est déjà connecté
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
+        // Crée le formulaire de connexion
         $model = new LoginForm();
+
+        // Si le formulaire est envoyé et les identifiants sont corrects
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+
+            // Connexion réussie → accueil
+            return $this->redirect(['site/index']);
         }
 
+        // Vide le champ mot de passe
         $model->password = '';
+
+        // Affiche le formulaire de connexion
         return $this->render('login', [
-            'model' => $model,
+            'model' => $model
         ]);
     }
+
+
+
+
+
+
+
 
     /**
      * Logout action.
@@ -103,10 +121,21 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
+        // Déconnecte l’utilisateur
         Yii::$app->user->logout();
 
+        // Retour à l’accueil
         return $this->goHome();
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Displays contact page.
@@ -148,13 +177,18 @@ class SiteController extends Controller
         return $this->render('test',['user'=>$user]);   // charge la vue test.php, injecte la variable $user et construit la page html 
     }
 
-
-
     public function actionSignup()
-            {
-                $model = new \app\models\SignupForm();   // même vide c’est OK
-                return $this->render('signup', ['model' => $model]);
-            }
+    {
+        $model = new \app\models\SignupForm();
+
+        if (Yii::$app->request->isPost && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'Compte créé avec succès.');
+            return $this->redirect(['site/login']);
+        }
+
+        return $this->render('signup', ['model' => $model]);
+    }
+
 
 
 
@@ -227,6 +261,22 @@ class SiteController extends Controller
 
         return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));//appel normal sans ajax , variables injectées dans recherche.php
     }
+
+
+    public function actionProfil()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $user = Yii::$app->user->identity;
+
+        return $this->render('profil', [
+            'user' => $user
+        ]);
+    }
+
+
 
 
 
