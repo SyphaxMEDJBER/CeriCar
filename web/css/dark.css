@@ -278,24 +278,11 @@ input:focus {
 
 
 #tp{
-    margin-top: 180px;
+    margin-top: 20px;
     color:  #159692;
     border-left:  #159692 solid 10px;
     padding-left: 20px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -607,3 +594,6 @@ input:focus {
     line-height: normal;
     text-decoration: none;
 }
+
+
+

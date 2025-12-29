@@ -78,7 +78,7 @@ $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]
 </nav>
 
 <!-- CONTENU -->
-<main class="container" style="margin-top:120px; min-height:70vh;">
+<main class="container" style="margin-top:30px; min-height:70vh;">
     <?= $content ?>
 </main>
 
