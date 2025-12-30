@@ -497,7 +497,6 @@ input:focus {
 
 
 
-/* Fix Bootstrap collapse: empêcher ton CSS de laisser le menu ouvert en mobile */
 @media (max-width: 991.98px) {
   .navbar .navbar-collapse {
     display: none !important;

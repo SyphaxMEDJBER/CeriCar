@@ -10,7 +10,7 @@ use yii\helpers\Html;
 
         <!-- Conducteur + badge -->
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="card-title mb-0"><?= Html::encode($r['conducteur']) ?></h5>
+            <h5 class="card-title mb-0"><?= Html::encode($r['conducteur']." ".$r['conducteurnom']) ?></h5>
 
             <?php if ($r['complet']): ?>
                 <span class="badge badge-complet">COMPLET</span>
@@ -69,3 +69,13 @@ use yii\helpers\Html;
     </div>
 </div>
 <?php endforeach; ?>
+
+
+
+
+
+
+
+
+
+

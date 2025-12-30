@@ -227,6 +227,7 @@ class SiteController extends Controller
 
                         $resultats[] = [
                             'conducteur'  => $v->conducteurObj->prenom,
+                            'conducteurnom'  => $v->conducteurObj->nom,
                             'places'      => $placesRestantes,
                             'complet'     => $complet,
                             'prix'        => $prixTotal,
