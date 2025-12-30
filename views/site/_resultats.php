@@ -53,10 +53,16 @@ use yii\helpers\Html;
     </div>
 
 
-    <div class="card-footer mt-auto d-flex justify-content-between align-items-center">
-        <span class="price"><?= number_format($r['prix'], 2) ?> €</span>
+    <div class="card-footer mt-auto d-flex justify-content-between align-items-center px-3 py-2">
 
-        <button class="btn btn-reserver" disabled>
+        <div class="fw-bold fs-5 text-info">
+            <?= number_format($r['prix'], 2) ?> €
+        </div>
+        <button
+            class="btn btn-outline-info btn-sm btn-reserver"
+            data-voyage-id="<?= $r['voyage_id'] ?? '' ?>"
+            <?= $r['complet'] ? 'disabled' : '' ?>
+        >
             Réserver
         </button>
     </div>
