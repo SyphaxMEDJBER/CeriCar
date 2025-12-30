@@ -21,19 +21,15 @@ use yii\helpers\Html;
             <?php endif; ?>
         </div>
 
-        <!-- TIMELINE HEURES (style blablacar) -->
+        <!-- TIMELINE HEURES-->
         <div class="bb-time">
-            <span class="bb-hour">00:00</span>
 
             <div class="bb-track">
-                <span class="bb-circle"></span>
                 <span class="bb-bar"></span>
-                <span class="bb-duration">7h50</span>
+                <span class="bb-duration"><?="Départ: ".Html::encode($r['heure']).'h'?></span>
                 <span class="bb-bar"></span>
-                <span class="bb-circle"></span>
             </div>
 
-            <span class="bb-hour"><?= Html::encode($r['heure']) ?></span>
         </div>
 
         <div class="bb-cities">
