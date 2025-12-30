@@ -6,37 +6,65 @@ use yii\helpers\Html;
 <div class="col-md-6 col-lg-4">
     <div class="card search-card h-100 d-flex flex-column <?= $r['complet'] ? 'card-complet' : '' ?>">
 
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="card-title mb-0"><?= Html::encode($r['conducteur']) ?></h5>
+    <div class="card-body">
 
-                <?php if ($r['complet']): ?>
-                    <span class="badge badge-complet">COMPLET</span>
-                <?php else: ?>
-                    <span class="badge badge-dispo">
-                        DISPONIBLE (<?= $r['places'] ?>)
-                    </span>
-                <?php endif; ?>
-            </div>
+        <!-- Conducteur + badge -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title mb-0"><?= Html::encode($r['conducteur']) ?></h5>
 
-            <p class="trajet mb-2">
-                <?= Html::encode($depart) ?> → <?= Html::encode($arrivee) ?>
-            </p>
-
-            <p class="mb-1">🕒 <?= Html::encode($r['heure']) ?> h</p>
-            <p class="mb-1">🚗 <?= Html::encode($r['marque']) ?> – <?= Html::encode($r['type']) ?></p>
-            <p class="mb-2">🎒 Bagages : <?= Html::encode($r['bagages']) ?></p>
-
-            <?php if (!empty($r['contraintes'])): ?>
-                <div class="contrainte-line mt-2">
-                    ⚠️ <?= Html::encode($r['contraintes']) ?>
-                </div>
+            <?php if ($r['complet']): ?>
+                <span class="badge badge-complet">COMPLET</span>
+            <?php else: ?>
+                <span class="badge badge-dispo">
+                    DISPONIBLE (<?= $r['places'] ?>)
+                </span>
             <?php endif; ?>
         </div>
 
-        <div class="card-footer text-end mt-auto">
-            <span class="price"><?= number_format($r['prix'], 2) ?> €</span>
+        <!-- TIMELINE HEURES (style blablacar) -->
+        <div class="bb-time">
+            <span class="bb-hour">00:00</span>
+
+            <div class="bb-track">
+                <span class="bb-circle"></span>
+                <span class="bb-bar"></span>
+                <span class="bb-duration">7h50</span>
+                <span class="bb-bar"></span>
+                <span class="bb-circle"></span>
+            </div>
+
+            <span class="bb-hour"><?= Html::encode($r['heure']) ?></span>
         </div>
+
+        <div class="bb-cities">
+            <span><?= Html::encode($depart) ?></span>
+            <span><?= Html::encode($arrivee) ?></span>
+        </div>
+
+
+     
+
+        <!-- INFOS -->
+        <p class="mb-1">🚗 <?= Html::encode($r['marque']) ?> – <?= Html::encode($r['type']) ?></p>
+        <p class="mb-2">🎒 Bagages : <?= Html::encode($r['bagages']) ?></p>
+
+        <?php if (!empty($r['contraintes'])): ?>
+            <div class="contrainte-line mt-2">
+                ⚠️ <?= Html::encode($r['contraintes']) ?>
+            </div>
+        <?php endif; ?>
+
+    </div>
+
+
+    <div class="card-footer mt-auto d-flex justify-content-between align-items-center">
+        <span class="price"><?= number_format($r['prix'], 2) ?> €</span>
+
+        <button class="btn btn-reserver" disabled>
+            Réserver
+        </button>
+    </div>
+
 
     </div>
 </div>
