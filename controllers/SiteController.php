@@ -282,4 +282,41 @@ class SiteController extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //part 5
+
+
+    public function actionReserver(){
+        
+    }
+
+
+
+
 }
