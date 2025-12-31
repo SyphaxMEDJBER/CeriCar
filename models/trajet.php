@@ -52,6 +52,23 @@ class trajet extends ActiveRecord{
 
 
 
+
+  public static function getTrajetsDepuis($villedep)
+  {
+      return self::find()
+          ->where(['depart' => $villedep])
+          ->all();
+  }
+
+
+
+
+
+
+
+
+
+
 }
 
 
