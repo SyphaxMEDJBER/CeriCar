@@ -213,38 +213,37 @@ class SiteController extends Controller
             $arrivee = $request->post('arrivee');//arr
             $nb = (int)$request->post('voyageurs');//nbr de voyageurs
             $cores = (bool)$request->post('correspondance',false);//si on veut des correspondances
-            if(!cores){
-
-                $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
+            
+            $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
+            
+            if ($trajet) {//si le trajet existe 
+                $voyages = voyage::getVoyagesByTrajetId($trajet->id);// Récupère tous les voyages proposés pour ce trajet
                 
-                if ($trajet) {//si le trajet existe 
-                    $voyages = voyage::getVoyagesByTrajetId($trajet->id);// Récupère tous les voyages proposés pour ce trajet
-                    
-                    
-                    foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
-                        if($nb<=$v->nbplacedispo){
-                            
-                            
-                            $placesRestantes = $v->getPlacesRestantes();//
-                            $complet = ($placesRestantes < $nb);//true si complet
-                            
-                            $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
-                            
-                            $resultats[] = [
-                                'conducteur'  => $v->conducteurObj->prenom,
-                                'conducteurnom'  => $v->conducteurObj->nom,
-                                'places'      => $placesRestantes,
-                                'complet'     => $complet,
-                                'prix'        => $prixTotal,
-                                'heure'       => $v->heuredepart,
-                                'marque'      => $v->marqueVehicule->marquev,
+                
+                foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
+                    if($nb<=$v->nbplacedispo){
+                        
+                        
+                        $placesRestantes = $v->getPlacesRestantes();//
+                        $complet = ($placesRestantes < $nb);//true si complet
+                        
+                        $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
+                        
+                        $resultats[] = [
+                            'conducteur'  => $v->conducteurObj->prenom,
+                            'conducteurnom'  => $v->conducteurObj->nom,
+                            'places'      => $placesRestantes,
+                            'complet'     => $complet,
+                            'prix'        => $prixTotal,
+                            'heure'       => $v->heuredepart,
+                            'marque'      => $v->marqueVehicule->marquev,
                                 'type'        => $v->typeVehicule->typev,
                                 'bagages'     => $v->nbbagage,
                                 'contraintes' => $v->contraintes
                             ];
                         }
                     }
-        
+                    
                     $notif = empty($resultats)//si la liste des resultats est vide
                     ? ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.']//on affiche ca
                     : ['type'=>'success','message'=>count($resultats).' voyage(s) trouvé(s).'];//sinon ca
@@ -252,10 +251,11 @@ class SiteController extends Controller
                 } else {//si le trajet nexite pas 
                     $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];//on affiche cette notif
                 }
-            }else{//sil accepte les correspondances 
+                
+                if($cores){
+                    
 
-
-            }
+                }
                 // retour de serveur
                 if ($request->isAjax) {//si lappel vient dajax
                     return $this->asJson([   //reponse json pas de layout
