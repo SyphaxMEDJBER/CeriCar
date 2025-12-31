@@ -220,7 +220,7 @@ class SiteController extends Controller
             $depart = $departInput;//recupere la ville de dep envoyee par le form
             $arrivee = $arriveeInput;//arr
             $nb = (int)$nbInput;//nbr de voyageurs
-            $cores = (bool)$coresInput;//si on veut des correspondances
+            $cores = !empty($coresInput);//si on veut des correspondances
             
             $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
             

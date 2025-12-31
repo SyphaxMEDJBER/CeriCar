@@ -55,15 +55,13 @@ $this->title = "Recherche de voyage";
 <?= Html::endForm() ?>
 </div>
 
- <!-- CONTENEUR RÉSULTATS -->
-<div id="resultats" class="row g-4 mt-4">
+<!-- CONTENEUR RÉSULTATS -->
+<div
+    id="resultats"
+    class="row g-4 mt-4"
+    data-details-url="<?= Url::to(['site/correspondance-details']) ?>"
+>
 
 
 
 </div>
-
-<div
-    id="correspondance-details"
-    class="correspondance-details d-none"
-    data-url="<?= Url::to(['site/correspondance-details']) ?>"
-></div>

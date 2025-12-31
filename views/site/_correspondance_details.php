@@ -9,9 +9,9 @@ use yii\helpers\Html;
         $startCity = $segments[0]['depart'] ?? '';
         $endCity = $segments[count($segments) - 1]['arrivee'] ?? '';
     ?>
-    <div class="details-card">
+    <div class="details-container">
         <div class="details-header">
-            <div class="details-title">Details du trajet</div>
+            <div class="details-title">Details correspondance</div>
             <div class="details-summary">
                 <span><?= Html::encode($startCity) ?></span>
                 <span class="route-sep">→</span>
@@ -20,63 +20,58 @@ use yii\helpers\Html;
             <div class="details-price"><?= number_format($total, 2) ?> €</div>
         </div>
 
-        <div class="details-body">
-            <?php foreach ($segments as $index => $segment): ?>
-                <div class="details-row">
-                    <div class="details-time"><?= Html::encode($segment['heure']) ?> h</div>
-                    <div class="details-line">
-                        <span class="details-dot"></span>
-                        <?php if ($index < count($segments) - 1): ?>
-                            <span class="details-rail"></span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="details-content">
-                        <div class="details-city"><?= Html::encode($segment['depart']) ?></div>
-                        <div class="details-route">
-                            <?= Html::encode($segment['depart']) ?> <span class="route-sep">→</span> <?= Html::encode($segment['arrivee']) ?>
-                        </div>
-                        <div class="details-meta">
-                            <span class="meta-label">Vehicule</span>
-                            <span class="meta-value"><?= Html::encode($segment['marque']) ?> – <?= Html::encode($segment['typev']) ?></span>
-                        </div>
-                        <div class="details-meta">
-                            <span class="meta-label">Bagages</span>
-                            <span class="meta-value"><?= Html::encode($segment['bagages']) ?></span>
-                        </div>
-                        <div class="details-meta">
-                            <span class="meta-label">Places</span>
-                            <span class="meta-value"><?= Html::encode($segment['places']) ?></span>
-                        </div>
-                        <?php if (!empty($segment['prix'])): ?>
-                            <div class="details-meta">
-                                <span class="meta-label">Prix</span>
-                                <span class="meta-value"><?= number_format($segment['prix'], 2) ?> €</span>
+        <div class="row g-3 equal-height">
+            <?php foreach ($segments as $segment): ?>
+                <div class="col-md-6">
+                    <div class="card search-card detail-card h-100">
+                        <div class="card-body">
+                            <div class="result-header">
+                                <div class="result-title">Trajet</div>
                             </div>
-                        <?php endif; ?>
-                        <?php if (!empty($segment['contraintes'])): ?>
-                            <div class="contrainte-line mt-2">
-                                <?= Html::encode($segment['contraintes']) ?>
+
+                            <div class="bb-time">
+                                <div class="bb-track">
+                                    <span class="bb-bar"></span>
+                                    <span class="bb-duration"><?= Html::encode($segment['heure']) ?> h</span>
+                                    <span class="bb-bar"></span>
+                                </div>
                             </div>
-                        <?php endif; ?>
+
+                            <div class="bb-cities">
+                                <span><?= Html::encode($segment['depart']) ?></span>
+                                <span><?= Html::encode($segment['arrivee']) ?></span>
+                            </div>
+
+                            <div class="result-meta">
+                                <div class="meta-row">
+                                    <span class="meta-label">Vehicule</span>
+                                    <span class="meta-value"><?= Html::encode($segment['marque']) ?> – <?= Html::encode($segment['typev']) ?></span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-label">Bagages</span>
+                                    <span class="meta-value"><?= Html::encode($segment['bagages']) ?></span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-label">Places</span>
+                                    <span class="meta-value"><?= Html::encode($segment['places']) ?></span>
+                                </div>
+                            </div>
+
+                            <?php if (!empty($segment['contraintes'])): ?>
+                                <div class="contrainte-line mt-2">
+                                    <?= Html::encode($segment['contraintes']) ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="card-footer mt-auto d-flex justify-content-between align-items-center px-3 py-2 result-footer">
+                            <div class="result-price">
+                                <?= number_format($segment['prix'], 2) ?> €
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <?php if ($index < count($segments) - 1): ?>
-                    <div class="details-connector">
-                        Correspondance a <?= Html::encode($segment['arrivee']) ?>
-                    </div>
-                <?php endif; ?>
             <?php endforeach; ?>
-
-            <div class="details-row details-row-end">
-                <div class="details-time">Arrivee</div>
-                <div class="details-line">
-                    <span class="details-dot"></span>
-                </div>
-                <div class="details-content">
-                    <div class="details-city"><?= Html::encode($endCity) ?></div>
-                </div>
-            </div>
         </div>
     </div>
 <?php endif; ?>

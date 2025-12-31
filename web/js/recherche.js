@@ -9,8 +9,10 @@ $(function () {
       data: $(this).serialize(),// toute les valeurs saisies
       success: function (res) { //sexecute quand http xhr.status=200 le serveur a repondu correctemenet, res la reponse de controleur json
         $("#resultats").html(res.html);//le html généré par renderpartial(...),on replace le contenu de <div id="resultats">
-        $("#correspondance-details").addClass("d-none").empty();
-        $(".card-correspondance").removeClass("is-selected");
+        $(".card-correspondance").removeClass("is-selected is-open");
+        $(".corr-item").removeClass("corr-item-expanded");
+        $(".correspondance-inline").addClass("d-none").empty();
+        $(".result-toggle").text("Voir les details");
 
         if (res.notif) {
           $("#notif") //selection du bandeau global (dans le layout)
@@ -28,12 +30,21 @@ $(function () {
     }
 
     var $card = $(this);
-    var ids = $card.data("voyage-ids");
+    var ids = $card.data("voyageIds") || $card.attr("data-voyage-ids");
     var nb = $card.data("nb");
-    var $details = $("#correspondance-details");
-    var url = $details.data("url");
+    var $results = $("#resultats");
+    var url = $results.attr("data-details-url");
+    var $row = $card.closest("[class*='col-']");
 
     if (!ids || !url) {
+      return;
+    }
+
+    if ($card.hasClass("is-selected")) {
+      $card.removeClass("is-selected is-open");
+      $card.closest(".corr-item").removeClass("corr-item-expanded");
+      $card.find(".correspondance-inline").addClass("d-none").empty();
+      $card.find(".result-toggle").text("Voir les details");
       return;
     }
 
@@ -42,12 +53,16 @@ $(function () {
       type: "GET",
       data: { ids: ids, nb: nb },
       success: function (html) {
-        $details.html(html).removeClass("d-none");
-        $(".card-correspondance").removeClass("is-selected");
-        $card.addClass("is-selected");
-        $("html, body").animate({ scrollTop: $details.offset().top - 90 }, 250);
+        $(".card-correspondance").removeClass("is-selected is-open");
+        $(".corr-item").removeClass("corr-item-expanded");
+        $(".correspondance-inline").addClass("d-none").empty();
+        $(".result-toggle").text("Voir les details");
+        $card.addClass("is-selected is-open");
+        $card.closest(".corr-item").addClass("corr-item-expanded");
+        $card.find(".correspondance-inline").html(html).removeClass("d-none");
+        $card.find(".result-toggle").text("Masquer les details");
+        $("html, body").animate({ scrollTop: $card.offset().top - 90 }, 250);
       }
     });
   });
 });
-
