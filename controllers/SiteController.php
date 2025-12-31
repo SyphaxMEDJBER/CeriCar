@@ -260,6 +260,39 @@ class SiteController extends Controller
                         if($va!=$arrivee && $va!=$depart){
                             foreach ($vdep as $vd){
                                 if($va==$vd){
+                                    $trajet1=trajet::getTrajet($depart,$va);
+                                    $trajet2=trajet::getTrajet($va,$arrivee);
+
+                                    if($trajet1 && $trajet2){
+
+                                        $voyages1=voyage::getVoyagesByTrajetId($trajet1->id);
+                                        $voyages2=voyage::getVoyagesByTrajetId($trajet2->id);
+
+                                        foreach($voyages1 as $v1){
+                                            foreach($voyages2 as $v2){
+                                                if($nb<=$v1->nbplacedispo && $nb<=$v2->nbplacedispo && $v1->heuredepart < $v2->heuredepart){
+
+                                                    $placesRestantes1 = $v1->getPlacesRestantes();
+                                                    $placesRestantes2 = $v2->getPlacesRestantes();
+                                                    $complet = ($placesRestantes1 < $nb || $placesRestantes2 < $nb);
+
+                                                    $prixTotal = ($trajet1->distance * $v1->tarif + $trajet2->distance * $v2->tarif) * $nb;
+
+                                                    $resultats[] = [
+                                                        'conducteur'  => $v1->conducteurObj->prenom . " / " . $v2->conducteurObj->prenom,
+                                                        'conducteurnom'  => $v1->conducteurObj->nom . " / " . $v2->conducteurObj->nom,
+                                                        'places'      => min($placesRestantes1, $placesRestantes2),
+                                                        'complet'     => $complet,
+                                                        'prix'        => $prixTotal,
+                                                        'heure'       => $v1->heuredepart . " / " . $v2->heuredepart,
+                                                        'marque'      => $v1->marqueVehicule->marquev . " / " . $v2->marqueVehicule->marquev,
+                                                        'type'        => $v1->typeVehicule->typev . " / " . $v2->typeVehicule->typev,
+                                                        'bagages'     => min($v1->nbbagage, $v2->nbbagage),
+                                                        'contraintes' => $v1->contraintes . " / " . $v2->contraintes
+                                                    ];
+                                                }
+                                            }
+                                        }
 
                                 }
 
@@ -291,10 +324,10 @@ class SiteController extends Controller
                 }
                 
                 return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));//appel normal sans ajax , variables injectées dans recherche.php
+            }
         }
+
     }
-
-
     public function actionProfil()
     {
         if (Yii::$app->user->isGuest) {
