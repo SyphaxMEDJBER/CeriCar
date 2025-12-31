@@ -15,6 +15,7 @@ $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?> – CeriCar</title>
     <?php $this->head() ?>
 
