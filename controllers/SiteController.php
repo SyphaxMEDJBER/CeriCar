@@ -203,6 +203,8 @@ class SiteController extends Controller
         $varr = trajet::getArrivee();// ville arr
 
         $resultats = [];//tableau final des vyg a afficher 
+        $resultats1 = [];
+        $resultats2 = [];
         $depart = $arrivee = null;//valeurs saisies init
         $nb = null;//nombre de voyageurs init
         $cores=null;
@@ -253,7 +255,28 @@ class SiteController extends Controller
                 }
                 
                 if($cores){
-                    
+
+                    foreach($varr as $va){// c quoi lerreur ici ? reponse: lerreur cest
+
+
+                        foreach ($vdep!=$arrivee){
+                            if($vdep==$varr){
+                                $trajet1 = trajet::getTrajet($depart,$varr);
+                                $trajet2 = trajet::getTrajet($varr,$arrivee);
+
+
+
+
+
+                            }
+
+                        }
+
+                        
+
+
+                    }
+
 
                 }
                 // retour de serveur
