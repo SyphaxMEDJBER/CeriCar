@@ -209,6 +209,8 @@ class SiteController extends Controller
         $depart = $arrivee = null;//valeurs saisies init
         $nb = null;//nombre de voyageurs init
         $cores=null;
+        $directCount = 0;
+        $corrCount = 0;
 
         $departInput = $request->post('depart', $request->get('depart'));
         $arriveeInput = $request->post('arrivee', $request->get('arrivee'));
@@ -251,13 +253,9 @@ class SiteController extends Controller
                                 'bagages'     => $v->nbbagage,
                                 'contraintes' => $v->contraintes
                             ];
+                        $directCount++;
                         }
                     }
-                    
-                    $notif = empty($resultats)//si la liste des resultats est vide
-                    ? ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.']//on affiche ca
-                    : ['type'=>'success','message'=>count($resultats).' voyage(s) trouvé(s).'];//sinon ca
-                    
                 } else {//si le trajet nexite pas 
                     $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];//on affiche cette notif
                 }
@@ -303,11 +301,29 @@ class SiteController extends Controller
                                     'bagages' => min($v1->nbbagage, $v2->nbbagage),
                                     'contraintes' => trim($v1->contraintes . ' ' . $v2->contraintes)
                                 ];
+                                $corrCount++;
                             }
                         }
                     }
                 }
             }
+
+                if ($directCount === 0 && $corrCount === 0) {
+                    if ($trajet) {
+                        $notif = ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.'];
+                    } else {
+                        $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];
+                    }
+                } else {
+                    $parts = [];
+                    if ($directCount > 0) {
+                        $parts[] = $directCount.' direct(s)';
+                    }
+                    if ($corrCount > 0) {
+                        $parts[] = $corrCount.' correspondance(s)';
+                    }
+                    $notif = ['type'=>'success','message'=>implode(' · ', $parts).' trouvé(s).'];
+                }
 
 
 
