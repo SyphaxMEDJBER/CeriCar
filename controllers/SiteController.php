@@ -193,162 +193,144 @@ class SiteController extends Controller
 
 
                 
-   public function actionRecherche()
-{
-    $request = Yii::$app->request;
+ 
+    public function actionRecherche()
+    {
 
-    $vdep = trajet::getDepart();
-    $varr = trajet::getArrivee();
 
-    $resultatsDirects = [];
-    $resultatsCorrespondances = [];
-    $resultats = [];
+        $request = Yii::$app->request;//objet yii permet de lire post,get,ajax
 
-    $depart = $arrivee = null;
-    $nb = null;
-    $cores = false;
+        $vdep = trajet::getDepart();//liste distinct des ville de dep pour la datalist
+        $varr = trajet::getArrivee();// ville arr
 
-    if ($request->isPost) {
+        $resultats = [];//tableau final des vyg a afficher 
+        $resultats1 = [];
+        $resultats2 = [];
+        $depart = $arrivee = null;//valeurs saisies init
+        $nb = null;//nombre de voyageurs init
+        $cores=null;
 
-        $depart = $request->post('depart');
-        $arrivee = $request->post('arrivee');
-        $nb = (int)$request->post('voyageurs');
-        $cores = (bool)$request->post('correspondance', false);
+        $departInput = $request->post('depart', $request->get('depart'));
+        $arriveeInput = $request->post('arrivee', $request->get('arrivee'));
+        $nbInput = $request->post('voyageurs', $request->get('voyageurs'));
+        $coresInput = $request->post('correspondance', $request->get('correspondance', null));
 
-        /* =========================
-           1️⃣ VOYAGES DIRECTS A → C
-           ========================= */
-        $trajetDirect = trajet::getTrajet($depart, $arrivee);
-
-        if ($trajetDirect) {
-            $voyages = voyage::getVoyagesByTrajetId($trajetDirect->id);
-
-            foreach ($voyages as $v) {
-                $placesRestantes = $v->getPlacesRestantes();
-
-                if ($nb <= $placesRestantes) {
-                    $resultatsDirects[] = [
-                        'type'        => 'direct',
-                        'voyage_ids'  => [$v->id],
-                        'conducteur' => $v->conducteurObj->prenom,
-                        'places'     => $placesRestantes,
-                        'complet'    => false,
-                        'prix'       => $trajetDirect->distance * $v->tarif * $nb,
-                        'heure'      => $v->heuredepart,
-                        'marque'     => $v->marqueVehicule->marquev,
-                        'typev'      => $v->typeVehicule->typev,
-                        'bagages'    => $v->nbbagage,
-                        'contraintes'=> $v->contraintes
-                    ];
-                }
-            }
-        }
-
-        /* ======================================
-           2️⃣ CORRESPONDANCES A → B → C (si cochée)
-           ====================================== */
-        if ($cores) {
-
-            // Tous les trajets A → B
-            $trajetsAB = trajet::getTrajetsDepuis($depart);
-
-            foreach ($trajetsAB as $t1) {
-
-                $villeB = $t1->arrivee;
-
-                // Trajet B → C obligatoire
-                $trajetBC = trajet::getTrajet($villeB, $arrivee);
-                if (!$trajetBC) continue;
-
-                $voyagesAB = voyage::getVoyagesByTrajetId($t1->id);
-                $voyagesBC = voyage::getVoyagesByTrajetId($trajetBC->id);
-
-                foreach ($voyagesAB as $v1) {
-                    foreach ($voyagesBC as $v2) {
-
-                        if (
-                            $nb <= $v1->getPlacesRestantes() &&
-                            $nb <= $v2->getPlacesRestantes() &&
-                            $v1->heuredepart < $v2->heuredepart
-                        ) {
-                            $resultatsCorrespondances[] = [
-                                'type'        => 'correspondance',
-                                'voyage_ids'  => [$v1->id, $v2->id],
-                                'conducteur' => $v1->conducteurObj->prenom . ' / ' . $v2->conducteurObj->prenom,
-                                'places'     => min($v1->getPlacesRestantes(), $v2->getPlacesRestantes()),
-                                'complet'    => false,
-                                'prix'       => (
-                                    $t1->distance * $v1->tarif +
-                                    $trajetBC->distance * $v2->tarif
-                                ) * $nb,
-                                'heure'      => $v1->heuredepart . ' → ' . $v2->heuredepart,
-                                'marque'     => $v1->marqueVehicule->marquev . ' / ' . $v2->marqueVehicule->marquev,
-                                'typev'      => $v1->typeVehicule->typev . ' / ' . $v2->typeVehicule->typev,
-                                'bagages'    => min($v1->nbbagage, $v2->nbbagage),
-                                'contraintes'=> trim($v1->contraintes . ' ' . $v2->contraintes)
+        if ($request->isPost || ($request->isGet && ($departInput !== null || $arriveeInput !== null || $nbInput !== null || $coresInput !== null))) {//on ne calcule la recherche que si on  a soumis le formulaire
+            
+            $depart = $departInput;//recupere la ville de dep envoyee par le form
+            $arrivee = $arriveeInput;//arr
+            $nb = (int)$nbInput;//nbr de voyageurs
+            $cores = (bool)$coresInput;//si on veut des correspondances
+            
+            $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
+            
+            if ($trajet) {//si le trajet existe 
+                $voyages = voyage::getVoyagesByTrajetId($trajet->id);// Récupère tous les voyages proposés pour ce trajet
+                
+                
+                foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
+                    if($nb<=$v->nbplacedispo){
+                        
+                        
+                        $placesRestantes = $v->getPlacesRestantes();//
+                        $complet = ($placesRestantes < $nb);//true si complet
+                        
+                        $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
+                        
+                        $resultats[] = [
+                            'type'        => 'direct',
+                            'voyage_ids'  => [$v->id],
+                            'conducteur'  => $v->conducteurObj->prenom,
+                            'conducteurnom'  => $v->conducteurObj->nom,
+                            'places'      => $placesRestantes,
+                            'complet'     => $complet,
+                            'prix'        => $prixTotal,
+                            'heure'       => $v->heuredepart,
+                            'marque'      => $v->marqueVehicule->marquev,
+                                'typev'        => $v->typeVehicule->typev,
+                                'bagages'     => $v->nbbagage,
+                                'contraintes' => $v->contraintes
                             ];
+                        }
+                    }
+                    
+                    $notif = empty($resultats)//si la liste des resultats est vide
+                    ? ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.']//on affiche ca
+                    : ['type'=>'success','message'=>count($resultats).' voyage(s) trouvé(s).'];//sinon ca
+                    
+                } else {//si le trajet nexite pas 
+                    $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];//on affiche cette notif
+                }
+                
+               
+
+
+                
+            /* ==============================
+            2️⃣ CORRESPONDANCES A → B → C
+            ============================== */
+            if ($cores) {
+
+                foreach (trajet::getTrajetsDepuis($depart) as $t1) {
+
+                    $villeB = $t1->arrivee;
+                    if ($villeB === $arrivee) continue;
+
+                    $trajetBC = trajet::getTrajet($villeB, $arrivee);
+                    if (!$trajetBC) continue;
+
+                    foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
+                        foreach (voyage::getVoyagesByTrajetId($trajetBC->id) as $v2) {
+
+                            if (
+                                $nb <= $v1->getPlacesRestantes() &&
+                                $nb <= $v2->getPlacesRestantes() &&
+                                $v1->heuredepart < $v2->heuredepart
+                            ) {
+                                $resultats[] = [
+                                    'type' => 'correspondance',
+                                    'voyage_ids' => [$v1->id, $v2->id],
+                                    'conducteur' => $v1->conducteurObj->prenom . ' / ' . $v2->conducteurObj->prenom,
+                                    'places' => min($v1->getPlacesRestantes(), $v2->getPlacesRestantes()),
+                                    'complet' => false,
+                                    'prix' => (
+                                        $t1->distance * $v1->tarif +
+                                        $trajetBC->distance * $v2->tarif
+                                    ) * $nb,
+                                    'heure' => $v1->heuredepart . ' → ' . $v2->heuredepart,
+                                    'marque' => $v1->marqueVehicule->marquev . ' / ' . $v2->marqueVehicule->marquev,
+                                    'typev' => $v1->typeVehicule->typev . ' / ' . $v2->typeVehicule->typev,
+                                    'bagages' => min($v1->nbbagage, $v2->nbbagage),
+                                    'contraintes' => trim($v1->contraintes . ' ' . $v2->contraintes)
+                                ];
+                            }
                         }
                     }
                 }
             }
+
+
+
+                // retour de serveur
+                if ($request->isAjax) {//si lappel vient dajax
+                    return $this->asJson([   //reponse json pas de layout
+                        'html' => $this->renderPartial('_resultats', [//html partiel : que les cartes resultats
+                            'resultats' => $resultats,//donnees pour la vue partielle
+                            'depart'    => $depart,//affichage du trajet sur les cartes
+                            'arrivee'   => $arrivee
+                        ]),
+                        'notif' => $notif ?? null// le massage pour le bondeau
+                    ]);
+                }
+                
+                return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));//appel normal sans ajax , variables injectées dans recherche.php
+            
         }
 
-        /* =========================
-           3️⃣ FUSION + NOTIFICATION
-           ========================= */
-        $resultats = array_merge($resultatsDirects, $resultatsCorrespondances);
+        return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));
 
-        $notif = empty($resultats)
-            ? ['type' => 'warning', 'message' => 'Aucun voyage trouvé.']
-            : ['type' => 'success', 'message' => count($resultats) . ' voyage(s) trouvé(s).'];
-
-        if ($request->isAjax) {
-            return $this->asJson([
-                'html' => $this->renderPartial('_resultats', [
-                    'resultats' => $resultats,
-                    'depart'    => $depart,
-                    'arrivee'   => $arrivee
-                ]),
-                'notif' => $notif
-            ]);
-        }
-
-        return $this->render('recherche', compact(
-            'vdep', 'varr', 'resultats', 'depart', 'arrivee', 'nb'
-        ));
-    }
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

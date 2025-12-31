@@ -3,6 +3,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = "CeriCar – Trouvez votre voyage";
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 ?>
 
 <div class="container hero">
@@ -24,7 +30,7 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
 <!-- BARRE DE RECHERCHE HORIZONTALE -->
 <div class="container">
-    <?= Html::beginForm('recherche', 'get', ['class' => 'search-bar']) ?>
+    <?= Html::beginForm(['site/recherche'], 'get', ['class' => 'search-bar']) ?>
 
         <!-- Ville de départ -->
 
@@ -42,6 +48,7 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
         <!-- Ville d'arrivée -->
         <input type="text" 
+               name="arrivee"
                list="villesArrivee" 
                class="form-control search-input" 
                placeholder="Ville d’arrivée">
@@ -54,6 +61,7 @@ $this->title = "CeriCar – Trouvez votre voyage";
 
         <!-- Nombre de voyageurs -->
         <input type="number" 
+               name="voyageurs"
                class="form-control search-input" 
                min="1" max="10" 
                placeholder="Voyageurs">
