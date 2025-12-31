@@ -50,7 +50,7 @@ class voyage extends ActiveRecord{
 
   public function getPlacesRestantes()
   {
-      $reservations = Reservation::find()
+      $reservations = reservation::find()
           ->where(['voyage' => $this->id])
           ->sum('nbplaceresa');
 

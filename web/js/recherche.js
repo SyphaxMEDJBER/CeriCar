@@ -66,3 +66,112 @@ $(function () {
     });
   });
 });
+
+
+
+
+
+
+
+$(document).on("click", ".btn-reserver", function (e) {
+  e.preventDefault();
+
+  const ids = $(this).data("voyageIds") || $(this).attr("data-voyage-ids");
+  const nb = $("input[name='voyageurs']").val() || 1;
+
+  console.log("CLICK RESERVER", ids, nb);
+
+  $.ajax({
+    url: $("#resultats").attr("data-reserver-url"),
+    type: "POST",
+    dataType: "json",
+    data: {
+      voyage_ids: ids,
+      nb: nb,
+      _csrf: yii.getCsrfToken()
+    },
+    success: function (res) {
+      console.log("RESERVER OK", res);
+
+      if (res.status === "login" && res.redirect) {
+        window.location.href = res.redirect;
+        return;
+      }
+
+      $("#notif")
+        .removeClass("d-none alert-success alert-warning alert-danger")
+        .addClass(res.status === "success" ? "alert-success" : "alert-danger")
+        .text(res.message || "Réponse reçue.");
+
+      if (res.status === "success" && res.places) {
+        updatePlacesDispo(res.places, res.nb || nb);
+      }
+    },
+    error: function (xhr) {
+      console.log("RESERVER ERROR", xhr.status, xhr.responseText);
+      $("#notif")
+        .removeClass("d-none")
+        .addClass("alert-danger")
+        .text("Erreur AJAX réservation. Voir console.");
+    }
+  });
+});
+
+function updatePlacesDispo(places, nb) {
+  const nbNeeded = parseInt(nb, 10) || 1;
+
+  $(".btn-reserver").each(function () {
+    const $btn = $(this);
+    const idsRaw = $btn.data("voyageIds") || $btn.attr("data-voyage-ids");
+    if (!idsRaw) {
+      return;
+    }
+
+    const ids = String(idsRaw)
+      .split(",")
+      .map(function (id) {
+        return parseInt(id, 10);
+      })
+      .filter(function (id) {
+        return !Number.isNaN(id);
+      });
+
+    if (!ids.length) {
+      return;
+    }
+
+    let minPlaces = null;
+    ids.forEach(function (id) {
+      if (Object.prototype.hasOwnProperty.call(places, id)) {
+        const current = parseInt(places[id], 10);
+        if (!Number.isNaN(current)) {
+          minPlaces = minPlaces === null ? current : Math.min(minPlaces, current);
+        }
+      }
+    });
+
+    if (minPlaces === null) {
+      return;
+    }
+
+    const $card = $btn.closest(".card");
+    const $badge = $card.find(".result-badge").first();
+    if (!$badge.length) {
+      return;
+    }
+
+    if (minPlaces < nbNeeded) {
+      $badge
+        .removeClass("badge-dispo")
+        .addClass("badge-complet")
+        .text("Complet");
+      $btn.prop("disabled", true);
+    } else {
+      $badge
+        .removeClass("badge-complet")
+        .addClass("badge-dispo")
+        .text("Disponible (" + minPlaces + ")");
+      $btn.prop("disabled", false);
+    }
+  });
+}
