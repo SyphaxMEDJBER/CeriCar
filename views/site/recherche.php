@@ -33,6 +33,20 @@ $this->title = "Recherche de voyage";
        class="form-control search-input"
        min="1" value="1">
 
+<div class="d-flex align-items-center ms-3 correspondance-wrapper">
+    <input
+        type="checkbox"
+        id="correspondance"
+        name="correspondance"
+        value="1"
+        class="correspondance-checkbox"
+    >
+    <label for="correspondance" class="ms-2">
+        correspondances
+    </label>
+</div>
+
+
 <button type="submit" class="btn btn-primary search-btn">
     Rechercher
 </button>

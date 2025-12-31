@@ -688,3 +688,31 @@ input:focus {
   margin-bottom: 12px;
   margin-right: 20px;
 }
+
+
+.correspondance-checkbox {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    width: 18px;
+    height: 18px;
+    border: 2px solid #159692 !important;
+    background: transparent !important;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.correspondance-checkbox:checked {
+    background: #159692 !important;
+}
+
+.correspondance-checkbox:checked::after {
+    content: "✓";
+    position: absolute;
+    left: 3px;
+    top: -2px;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+}
