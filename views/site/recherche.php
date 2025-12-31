@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 $this->title = "Recherche de voyage";
 ?>
 
@@ -60,3 +61,9 @@ $this->title = "Recherche de voyage";
 
 
 </div>
+
+<div
+    id="correspondance-details"
+    class="correspondance-details d-none"
+    data-url="<?= Url::to(['site/correspondance-details']) ?>"
+></div>

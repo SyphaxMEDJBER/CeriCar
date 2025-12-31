@@ -332,6 +332,49 @@ class SiteController extends Controller
     
 }
 
+    public function actionCorrespondanceDetails()
+    {
+        $request = Yii::$app->request;
+        $idsParam = $request->get('ids', '');
+        $nb = (int)$request->get('nb', 1);
+
+        $ids = array_values(array_filter(array_map('intval', explode(',', $idsParam))));
+        $segments = [];
+        $total = 0.0;
+
+        foreach ($ids as $id) {
+            $voyage = voyage::findOne($id);
+            if (!$voyage) {
+                continue;
+            }
+
+            $trajet = $voyage->trajetObj;
+            $prix = null;
+            if ($trajet) {
+                $prix = $trajet->distance * $voyage->tarif * max($nb, 1);
+                $total += $prix;
+            }
+
+            $segments[] = [
+                'depart' => $trajet ? $trajet->depart : null,
+                'arrivee' => $trajet ? $trajet->arrivee : null,
+                'heure' => $voyage->heuredepart,
+                'marque' => $voyage->marqueVehicule ? $voyage->marqueVehicule->marquev : null,
+                'typev' => $voyage->typeVehicule ? $voyage->typeVehicule->typev : null,
+                'bagages' => $voyage->nbbagage,
+                'contraintes' => $voyage->contraintes,
+                'places' => $voyage->getPlacesRestantes(),
+                'prix' => $prix,
+            ];
+        }
+
+        return $this->renderPartial('_correspondance_details', [
+            'segments' => $segments,
+            'total' => $total,
+            'nb' => $nb,
+        ]);
+    }
+
 
 
     public function actionProfil()

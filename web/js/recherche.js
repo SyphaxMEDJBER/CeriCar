@@ -9,6 +9,8 @@ $(function () {
       data: $(this).serialize(),// toute les valeurs saisies
       success: function (res) { //sexecute quand http xhr.status=200 le serveur a repondu correctemenet, res la reponse de controleur json
         $("#resultats").html(res.html);//le html généré par renderpartial(...),on replace le contenu de <div id="resultats">
+        $("#correspondance-details").addClass("d-none").empty();
+        $(".card-correspondance").removeClass("is-selected");
 
         if (res.notif) {
           $("#notif") //selection du bandeau global (dans le layout)
@@ -19,6 +21,33 @@ $(function () {
       }
     });
   });
-});
 
+  $(document).on("click", ".card-correspondance", function (e) {
+    if ($(e.target).closest("button, a").length) {
+      return;
+    }
+
+    var $card = $(this);
+    var ids = $card.data("voyage-ids");
+    var nb = $card.data("nb");
+    var $details = $("#correspondance-details");
+    var url = $details.data("url");
+
+    if (!ids || !url) {
+      return;
+    }
+
+    $.ajax({
+      url: url,
+      type: "GET",
+      data: { ids: ids, nb: nb },
+      success: function (html) {
+        $details.html(html).removeClass("d-none");
+        $(".card-correspondance").removeClass("is-selected");
+        $card.addClass("is-selected");
+        $("html, body").animate({ scrollTop: $details.offset().top - 90 }, 250);
+      }
+    });
+  });
+});
 
