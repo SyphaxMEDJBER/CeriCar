@@ -256,21 +256,20 @@ class SiteController extends Controller
                 
                 if($cores){
 
-                    foreach($varr as $va){// c quoi lerreur ici ? reponse: lerreur cest
+                    foreach($varr as $va){
+                        if($va!=$arrivee && $va!=$depart){
+                            foreach ($vdep as $vd){
+                                if($va==$vd){
 
-
-                        foreach ($vdep!=$arrivee){
-                            if($vdep==$varr){
-                                $trajet1 = trajet::getTrajet($depart,$varr);
-                                $trajet2 = trajet::getTrajet($varr,$arrivee);
-
-
-
-
+                                }
 
                             }
 
+
                         }
+
+
+
 
                         
 
