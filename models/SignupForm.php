@@ -24,8 +24,6 @@ class SignupForm extends Model
             // IMPORTANT: permis = identifiant => string, pas number
             [['nom','prenom','pseudo','mail','photo','permis'], 'string', 'max' => 45],
 
-            // hash bcrypt > 45, donc ta colonne pass doit accepter (sinon tu dois rester en md5)
-            // Ici on reste en md5 pour être compatible si ta colonne pass est courte
             ['pass', 'string', 'min' => 3],
         ];
     }
@@ -48,7 +46,6 @@ class SignupForm extends Model
         // si vide => mets une image par défaut courte (<=45)
         $u->photo  = $this->photo ?: 'default.png';
 
-        // COMPAT BDD (si pass varchar(45)): md5 = 32 chars
         $u->pass   = md5($this->pass);
 
         return $u->save(false) ? $u : null;

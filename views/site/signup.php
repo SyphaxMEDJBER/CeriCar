@@ -22,6 +22,7 @@ $this->title = Html::encode('Créer un compte');
     <div class="login-card">
       <h1 class="login-title"><?= Html::encode($this->title)?></h1>
       <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
+      <div class="alert auth-notif d-none"></div>
       <?php $form=ActiveForm::begin([
         'id'=>'signup-form',
         'fieldConfig'=> [

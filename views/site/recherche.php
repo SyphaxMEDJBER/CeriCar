@@ -61,8 +61,12 @@ $this->title = "Recherche de voyage";
     class="row g-4 mt-4"
     data-details-url="<?= Url::to(['site/correspondance-details']) ?>"
     data-reserver-url="<?= \yii\helpers\Url::to(['site/reserver']) ?>">
-
-
-
-
+    <?php if (!empty($resultats)): ?>
+        <?= $this->render('_resultats', [
+            'resultats' => $resultats,
+            'depart' => $depart ?? null,
+            'arrivee' => $arrivee ?? null,
+            'nb' => $nb ?? null,
+        ]) ?>
+    <?php endif; ?>
 </div>

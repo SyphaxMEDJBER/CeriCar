@@ -7,6 +7,7 @@ use app\assets\AppAsset;
 AppAsset::register($this);
 JqueryAsset::register($this);
 $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]]);
+$this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
 ?>
 
 <?php $this->beginPage() ?>

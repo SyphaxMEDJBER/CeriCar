@@ -1,4 +1,6 @@
 $(function () {
+  tryAutoReserve();
+
   $("#formRecherche").on("submit", function (e) {//envoyer le post , recharger  la page
     e.preventDefault();//interdit au navigateuer de recharger la page , js prends le controle
 
@@ -94,7 +96,16 @@ $(document).on("click", ".btn-reserver", function (e) {
       console.log("RESERVER OK", res);
 
       if (res.status === "login" && res.redirect) {
-        window.location.href = res.redirect;
+        const payload = {
+          voyage_ids: ids,
+          nb: nb
+        };
+        sessionStorage.setItem("pendingReservation", JSON.stringify(payload));
+        const returnUrl = encodeURIComponent(window.location.href);
+        const redirectUrl = res.redirect.indexOf("?") === -1
+          ? res.redirect + "?returnUrl=" + returnUrl
+          : res.redirect + "&returnUrl=" + returnUrl;
+        window.location.href = redirectUrl;
         return;
       }
 
@@ -116,6 +127,56 @@ $(document).on("click", ".btn-reserver", function (e) {
     }
   });
 });
+
+function tryAutoReserve() {
+  const $results = $("#resultats");
+  if (!$results.length) {
+    return;
+  }
+  const url = $results.attr("data-reserver-url");
+  if (!url) {
+    return;
+  }
+
+  const pending = sessionStorage.getItem("pendingReservation");
+  if (!pending) {
+    return;
+  }
+
+  sessionStorage.removeItem("pendingReservation");
+  let payload = null;
+  try {
+    payload = JSON.parse(pending);
+  } catch (e) {
+    return;
+  }
+
+  if (!payload || !payload.voyage_ids) {
+    return;
+  }
+
+  $.ajax({
+    url: url,
+    type: "POST",
+    dataType: "json",
+    data: {
+      voyage_ids: payload.voyage_ids,
+      nb: payload.nb || 1,
+      _csrf: yii.getCsrfToken()
+    },
+    success: function (res) {
+      if (res.status === "success") {
+        $("#notif")
+          .removeClass("d-none alert-warning alert-danger")
+          .addClass("alert-success")
+          .text(res.message || "Réservation confirmée.");
+        if (res.places) {
+          updatePlacesDispo(res.places, res.nb || payload.nb || 1);
+        }
+      }
+    }
+  });
+}
 
 function updatePlacesDispo(places, nb) {
   const nbNeeded = parseInt(nb, 10) || 1;

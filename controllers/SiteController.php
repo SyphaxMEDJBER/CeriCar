@@ -90,14 +90,37 @@ class SiteController extends Controller
                 return $this->goHome();
             }
 
+            $returnUrl = Yii::$app->request->get('returnUrl');
+            if (!empty($returnUrl)) {
+                Yii::$app->user->setReturnUrl($returnUrl);
+            }
+
             // Crée le formulaire de connexion
             $model = new LoginForm();
 
             // Si le formulaire est envoyé et les identifiants sont corrects
-            if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            if ($model->load(Yii::$app->request->post())) {
+                if (Yii::$app->request->isAjax) {
+                    if ($model->login()) {
+                        $redirect = Yii::$app->user->getReturnUrl(['site/index']);
+                        return $this->asJson([
+                            'status' => 'success',
+                            'message' => 'Connexion reussie.',
+                            'redirect' => $redirect
+                        ]);
+                    }
 
-                // Connexion réussie → accueil
-                return $this->redirect(['site/index']);
+                    return $this->asJson([
+                        'status' => 'error',
+                        'message' => 'Identifiants invalides.',
+                        'errors' => $model->getErrors(),
+                    ]);
+                }
+
+                if ($model->login()) {
+                    // Connexion réussie → accueil
+                    return $this->goBack();
+                }
             }
 
             // Vide le champ mot de passe
@@ -183,9 +206,35 @@ class SiteController extends Controller
         {
             $model = new \app\models\SignupForm();
 
-            if (Yii::$app->request->isPost && $model->signup()) {
-                Yii::$app->session->setFlash('success', 'Compte créé avec succès.');
-                return $this->redirect(['site/login']);
+            if (Yii::$app->request->isPost) {
+                if (Yii::$app->request->isAjax) {
+                    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                        $user = $model->signup();
+                        if ($user) {
+                            return $this->asJson([
+                                'status' => 'success',
+                                'message' => 'Compte cree avec succes.',
+                                'redirect' => Yii::$app->urlManager->createUrl(['site/login'])
+                            ]);
+                        }
+
+                        return $this->asJson([
+                            'status' => 'error',
+                            'message' => "Erreur lors de l'inscription.",
+                        ]);
+                    }
+
+                    return $this->asJson([
+                        'status' => 'error',
+                        'message' => 'Veuillez corriger les erreurs.',
+                        'errors' => $model->getErrors(),
+                    ]);
+                }
+
+                if ($model->signup()) {
+                    Yii::$app->session->setFlash('success', 'Compte créé avec succès.');
+                    return $this->redirect(['site/login']);
+                }
             }
 
             return $this->render('signup', ['model' => $model]);

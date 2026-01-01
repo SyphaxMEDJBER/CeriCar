@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <h1 class="login-title"><?= Html::encode($this->title) ?></h1>
         <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
+        <div class="alert auth-notif d-none"></div>
 
         <?php $form = ActiveForm::begin([ //un tableau d'option que yii utilise pour configurer le formulaire 
             'id' => 'login-form',//un identifiant 
