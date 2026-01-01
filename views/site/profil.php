@@ -23,15 +23,19 @@ use yii\helpers\Html;
         <!-- INFOS -->
         <div class="profile-infos">
             <p><strong>Email :</strong> <?= Html::encode($user->mail) ?></p>
-            <p><strong>Permis :</strong> <?= $user->permis ?></p>
+            <p><strong>Permis :</strong> <?= $user->permis ? 'Oui' : 'Non' ?></p>
         </div>
 
         <hr>
 
-        <!-- ACTIONS -->
-        <div class="d-grid gap-3">
-            <a href="#" class="btn btn-primary btn-lg">Mes réservations</a>
-            <a href="#" class="btn btn-outline-info btn-lg">Proposer un voyage</a>
+        <div class="profile-actions d-grid gap-3">
+            <a href="<?= \yii\helpers\Url::to(['site/reservations']) ?>" class="btn btn-primary btn-lg">Mes réservations</a>
+            <a href="<?= \yii\helpers\Url::to(['site/mes-voyages']) ?>" class="btn btn-outline-dark btn-lg">Mes voyages</a>
+            <?php if ($user->permis): ?>
+                <a href="<?= \yii\helpers\Url::to(['site/proposer']) ?>" class="btn btn-outline-info btn-lg">Proposer un voyage</a>
+            <?php else: ?>
+                <button class="btn btn-outline-secondary btn-lg" disabled>Proposer un voyage (permis requis)</button>
+            <?php endif; ?>
         </div>
 
     </div>
