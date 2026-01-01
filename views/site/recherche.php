@@ -60,6 +60,7 @@ $this->title = "Recherche de voyage";
     id="resultats"
     class="row g-4 mt-4"
     data-details-url="<?= Url::to(['site/correspondance-details']) ?>"
+    data-reserver-url="<?= \yii\helpers\Url::to(['site/reserver']) ?>">
 >
 
 
