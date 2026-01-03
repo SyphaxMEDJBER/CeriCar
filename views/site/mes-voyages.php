@@ -14,52 +14,34 @@ use yii\helpers\Url;
 
         <?php if (!$user->permis): ?>
             <div class="empty-state">Permis requis pour proposer et afficher vos voyages.</div>
-        <?php else: ?>
-            <?php
-                $voyages = $user->voyages ?: [];
-                usort($voyages, function ($a, $b) {
-                    $aTime = $a->heuredepart ?? 0;
-                    $bTime = $b->heuredepart ?? 0;
-                    return $aTime <=> $bTime;
-                });
-            ?>
-        <?php endif; ?>
-
-        <?php if ($user->permis && !empty($voyages)): ?>
+        <?php elseif (!empty($user->voyages)): ?>
             <div class="row g-3">
-                <?php foreach ($voyages as $v): ?>
+                <?php foreach ($user->voyages as $v): ?>
                     <?php $trajet = $v->trajetObj; ?>
                     <div class="col-md-6">
-                        <div class="card search-card h-100">
-                            <div class="card-body">
-                                <div class="result-header">
-                                    <div class="result-title">
-                                        <?= Html::encode($trajet->depart ?? '') ?> → <?= Html::encode($trajet->arrivee ?? '') ?>
-                                    </div>
-                                    <span class="result-badge badge-dispo">Publié</span>
-                                </div>
-                                <div class="result-meta">
-                                    <div class="meta-row">
-                                        <span class="meta-label">Places dispo</span>
-                                        <span class="meta-value"><?= Html::encode($v->nbplacedispo) ?></span>
-                                    </div>
-                                    <div class="meta-row">
-                                        <span class="meta-label">Bagages</span>
-                                        <span class="meta-value"><?= Html::encode($v->nbbagage) ?></span>
-                                    </div>
-                                    <div class="meta-row">
-                                        <span class="meta-label">Heure depart</span>
-                                        <span class="meta-value"><?= Html::encode($v->heuredepart) ?> h</span>
-                                    </div>
-                                    <div class="meta-row">
-                                        <span class="meta-label">Contraintes</span>
-                                        <span class="meta-value"><?= Html::encode($v->contraintes) ?></span>
-                                    </div>
-                                    <div class="meta-row">
-                                        <span class="meta-label">Vehicule</span>
-                                        <span class="meta-value"><?= Html::encode($v->marqueVehicule->marquev ?? '') ?> – <?= Html::encode($v->typeVehicule->typev ?? '') ?></span>
-                                    </div>
-                                </div>
+                        <div class="info-card">
+                            <div class="info-title">
+                                <?= Html::encode($trajet->depart ?? '') ?> → <?= Html::encode($trajet->arrivee ?? '') ?>
+                            </div>
+                            <div class="info-row">
+                                <span>Places dispo</span>
+                                <strong><?= Html::encode($v->nbplacedispo) ?></strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Bagages</span>
+                                <strong><?= Html::encode($v->nbbagage) ?></strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Heure depart</span>
+                                <strong><?= Html::encode($v->heuredepart) ?> h</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Contraintes</span>
+                                <strong><?= Html::encode($v->contraintes) ?></strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Vehicule</span>
+                                <strong><?= Html::encode($v->marqueVehicule->marquev ?? '') ?> – <?= Html::encode($v->typeVehicule->typev ?? '') ?></strong>
                             </div>
                         </div>
                     </div>
