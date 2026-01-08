@@ -2,6 +2,14 @@
 use yii\helpers\Html;
 
 /** @var $user app\models\Internaute */
+
+$photo = trim((string)($user->photo ?? ''));
+$prenom = trim((string)($user->prenom ?? ''));
+$nom = trim((string)($user->nom ?? ''));
+$initials = strtoupper(mb_substr($prenom, 0, 1) . mb_substr($nom, 0, 1));
+if ($initials === '') {
+    $initials = '?';
+}
 ?>
 
 <div class="d-flex justify-content-center mt-5">
@@ -9,8 +17,22 @@ use yii\helpers\Html;
 
         <!-- HEADER -->
         <div class="profile-header d-flex align-items-center gap-4">
-            <div class="profile-avatar">
-                <img src="<?= Html::encode($user->photo) ?>" alt="Photo profil">
+            <div class="profile-avatar" role="img" aria-label="Photo profil">
+                <?php if ($photo !== ''): ?>
+                    <img
+                        src="<?= Html::encode($photo) ?>"
+                        alt=""
+                        onload="this.nextElementSibling.classList.add('d-none');"
+                        onerror="this.style.display='none';this.nextElementSibling.classList.remove('d-none');"
+                    >
+                    <div class="profile-avatar-fallback" aria-hidden="true">
+                        <?= Html::encode($initials) ?>
+                    </div>
+                <?php else: ?>
+                    <div class="profile-avatar-fallback" aria-hidden="true">
+                        <?= Html::encode($initials) ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <div>
                 <h2 class="mb-0"><?= Html::encode($user->prenom . ' ' . $user->nom) ?></h2>
@@ -29,14 +51,16 @@ use yii\helpers\Html;
         <hr>
 
         <div class="profile-actions d-grid gap-3">
-            <a href="<?= \yii\helpers\Url::to(['site/reservations']) ?>" class="btn btn-primary btn-lg">Mes réservations</a>
-            <a href="<?= \yii\helpers\Url::to(['site/mes-voyages']) ?>" class="btn btn-outline-dark btn-lg">Mes voyages</a>
+            <a href="<?= \yii\helpers\Url::to(['site/reservations']) ?>" class="btn btn-primary btn-lg js-profile-load">Mes réservations</a>
+            <a href="<?= \yii\helpers\Url::to(['site/mes-voyages']) ?>" class="btn btn-accent btn-lg js-profile-load">Mes voyages</a>
             <?php if ($user->permis): ?>
-                <a href="<?= \yii\helpers\Url::to(['site/proposer']) ?>" class="btn btn-outline-info btn-lg">Proposer un voyage</a>
+                <a href="<?= \yii\helpers\Url::to(['site/proposer']) ?>" class="btn btn-outline-info btn-lg js-profile-load">Proposer un voyage</a>
             <?php else: ?>
                 <button class="btn btn-outline-secondary btn-lg" disabled>Proposer un voyage (permis requis)</button>
             <?php endif; ?>
         </div>
+
+        <div id="profile-content" class="profile-embed mt-4"></div>
 
     </div>
 </div>

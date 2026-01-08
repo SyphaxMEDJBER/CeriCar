@@ -1,10 +1,14 @@
 /* DARK MODE PREMIUM - CERICAR */
 
+:root {
+    --nav-height: 80px;
+}
+
 body {
     background-color: #000000;
     color: #f0f0f0;
     font-family: "Inter", sans-serif;
-    padding-top: 80px; /* espace pour navbar fixe */
+    padding-top: var(--nav-height); /* espace pour navbar fixe */
 }
 
 /* NAVBAR */
@@ -110,7 +114,7 @@ body {
 }
 /* SEARCH BAR */
 .search-bar {
-    margin-top: 15px;
+    margin-top: 60px;
     background: #1a1a1a;
     padding: 15px;
     border-radius: 50px;
@@ -729,6 +733,19 @@ input:focus {
     object-fit: cover;
 }
 
+.profile-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    color: #0b0b0b;
+    background: radial-gradient(circle at 30% 30%, #4df4df, #159692);
+}
+
 .profile-infos p {
     font-size: 1.1rem;
     margin-bottom: 10px;
@@ -741,6 +758,28 @@ input:focus {
 .profile-actions .btn {
     border-radius: 14px;
     padding: 12px 18px;
+}
+
+.btn-accent {
+    background: #159692;
+    border-color: #159692;
+    color: #fff !important;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+    background: #117873;
+    border-color: #117873;
+    color: #fff !important;
+}
+
+.btn-accent:focus {
+    box-shadow: 0 0 0 0.2rem rgba(21, 150, 146, 0.35);
+}
+
+.profile-embed .section-card {
+    width: 100%;
+    padding: 24px;
 }
 
 .page-shell {
@@ -945,6 +984,17 @@ input:focus {
   color:#159692;
   margin-bottom: 12px;
   margin-right: 20px;
+}
+
+.bb-cities-compact {
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-right: 0;
+}
+
+.bb-cities-compact .route-sep {
+  color: rgba(21, 150, 146, 0.75);
 }
 
 

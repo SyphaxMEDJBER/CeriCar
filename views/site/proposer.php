@@ -9,6 +9,7 @@ use yii\helpers\Url;
 /** @var $form array */
 /** @var $notif array|null */
 /** @var $errors array */
+/** @var $embedded bool */
 ?>
 
 <div class="page-shell">
@@ -17,22 +18,6 @@ use yii\helpers\Url;
             <h2>Proposer un voyage</h2>
             <p class="section-subtitle">Renseigne les details de ton trajet.</p>
         </div>
-
-        <?php if (!empty($notif)): ?>
-            <div class="alert alert-<?= Html::encode($notif['type']) ?> proposer-alert">
-                <?= Html::encode($notif['message']) ?>
-            </div>
-        <?php endif; ?>
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger proposer-alert">
-                <strong>Erreurs:</strong>
-                <ul class="mb-0">
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= Html::encode($error) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
 
         <form method="post" action="<?= Url::to(['site/proposer']) ?>" class="proposer-form">
             <input type="hidden" name="_csrf" value="<?= Html::encode(Yii::$app->request->getCsrfToken()) ?>">
@@ -122,8 +107,37 @@ use yii\helpers\Url;
 
             <div class="mt-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Proposer</button>
-                <a href="<?= Url::to(['site/profil']) ?>" class="btn btn-outline-light">Retour profil</a>
+                <?php if (empty($embedded)): ?>
+                    <a href="<?= Url::to(['site/profil']) ?>" class="btn btn-outline-light">Retour profil</a>
+                <?php endif; ?>
             </div>
         </form>
     </div>
 </div>
+
+<?php if (!empty($notif) || !empty($errors)): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var notif = document.getElementById("notif");
+    if (!notif) {
+        return;
+    }
+
+    notif.classList.remove("d-none", "alert-success", "alert-warning", "alert-danger");
+    notif.classList.add("alert-<?= Html::encode($notif['type'] ?? 'danger') ?>");
+    <?php if (!empty($errors)): ?>
+    var errors = <?= json_encode(array_values($errors)) ?>;
+    var html = "<strong>Erreurs:</strong><ul class=\"mb-0\">";
+    errors.forEach(function (err) {
+        var li = document.createElement("li");
+        li.textContent = err;
+        html += li.outerHTML;
+    });
+    html += "</ul>";
+    notif.innerHTML = html;
+    <?php else: ?>
+    notif.textContent = <?= json_encode($notif['message'] ?? '') ?>;
+    <?php endif; ?>
+});
+</script>
+<?php endif; ?>

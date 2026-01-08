@@ -8,6 +8,8 @@ AppAsset::register($this);
 JqueryAsset::register($this);
 $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]]);
 $this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
+$this->registerJsFile('@web/js/profil.js', ['depends' => [JqueryAsset::class]]);
+$this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class]]);
 ?>
 
 <?php $this->beginPage() ?>
@@ -49,7 +51,7 @@ $this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
             <?php if (Yii::$app->user->isGuest): ?>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= Url::to(['site/login']) ?>">Connexion</a>
+                    <a class="nav-link" href="<?= Url::to(['site/login']) ?>" data-ajax="false">Connexion</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= Url::to(['site/signup']) ?>">Inscription</a>
@@ -76,14 +78,15 @@ $this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
     </div>
 </nav>
 
-<!-- BANDEAU NOTIFICATION -->
-<div class="notif-wrap">
-    <div id="notif" class="alert text-center m-0 d-none"></div>
-</div>
-
 <!-- CONTENU -->
 <main class="container" style="margin-top:30px; min-height:70vh;">
-    <?= $content ?>
+    <!-- BANDEAU NOTIFICATION -->
+    <div class="notif-wrap">
+        <div id="notif" class="alert text-center m-0 d-none"></div>
+    </div>
+    <div id="page-content">
+        <?= $content ?>
+    </div>
 </main>
 
 <!-- FOOTER -->

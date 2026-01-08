@@ -28,53 +28,6 @@ error_reporting(E_ALL);
 
 </div>
 
-<!-- BARRE DE RECHERCHE HORIZONTALE -->
-<div class="container">
-    <?= Html::beginForm(['site/recherche'], 'get', ['class' => 'search-bar']) ?>
-
-        <!-- Ville de départ -->
-
-        <input type="text" 
-               name="depart" 
-               list="villesDepart" 
-               class="form-control search-input" 
-               placeholder="Ville de départ">
-        <datalist id="villesDepart">
-            <?php foreach($vdep as $v):?>
-                <option value="<?=Html::encode($v)?>">
-            <?php endforeach;?>
-    
-        </datalist>
-
-        <!-- Ville d'arrivée -->
-        <input type="text" 
-               name="arrivee"
-               list="villesArrivee" 
-               class="form-control search-input" 
-               placeholder="Ville d’arrivée">
-        <datalist id="villesArrivee">
-            <?php foreach($varr as $v):?>
-                <option value="<?=Html::encode($v)?>">
-            <?php endforeach;?>
-
-        </datalist>
-
-        <!-- Nombre de voyageurs -->
-        <input type="number" 
-               name="voyageurs"
-               class="form-control search-input" 
-               min="1" max="10" 
-               placeholder="Voyageurs">
-
-        <!-- Bouton -->
-        <button type="submit" class="btn btn-primary search-btn">
-            Rechercher
-        </button>
-
-    <?= Html::endForm() ?>
-</div>
-
-
 
 <h2 id="tp">Trajets populaires</h2>
 

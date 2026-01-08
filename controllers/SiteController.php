@@ -550,6 +550,7 @@ class SiteController extends Controller
             $request = Yii::$app->request;
             $notif = null;
             $errors = [];
+            $embedded = (bool)$request->get('embed', false);
             $form = [
                 'depart' => '',
                 'arrivee' => '',
@@ -637,6 +638,36 @@ class SiteController extends Controller
                         $notif = ['type' => 'danger', 'message' => 'Erreur lors de la creation du voyage.'];
                     }
                 }
+
+                if ($request->isAjax) {
+                    if (!empty($errors)) {
+                        return $this->asJson([
+                            'status' => 'error',
+                            'message' => $notif['message'] ?? 'Erreur.',
+                            'errors' => $errors,
+                        ]);
+                    }
+
+                    return $this->asJson([
+                        'status' => ($notif['type'] ?? '') === 'success' ? 'success' : 'error',
+                        'message' => $notif['message'] ?? 'Erreur.',
+                        'reset' => ($notif['type'] ?? '') === 'success',
+                    ]);
+                }
+            }
+
+            if ($embedded) {
+                return $this->renderPartial('proposer', [
+                    'user' => $user,
+                    'vdep' => trajet::getDepart(),
+                    'varr' => trajet::getArrivee(),
+                    'types' => typevehicule::find()->all(),
+                    'marques' => marquevehicule::find()->all(),
+                    'form' => $form,
+                    'notif' => $notif,
+                    'errors' => $errors,
+                    'embedded' => true,
+                ]);
             }
 
             return $this->render('proposer', [
@@ -648,6 +679,7 @@ class SiteController extends Controller
                 'form' => $form,
                 'notif' => $notif,
                 'errors' => $errors,
+                'embedded' => false,
             ]);
         }
 
@@ -658,9 +690,17 @@ class SiteController extends Controller
             }
 
             $user = Yii::$app->user->identity;
+            $request = Yii::$app->request;
+            if ($request->get('embed')) {
+                return $this->renderPartial('_reservations', [
+                    'user' => $user,
+                    'embedded' => true,
+                ]);
+            }
 
             return $this->render('reservations', [
-                'user' => $user
+                'user' => $user,
+                'embedded' => false,
             ]);
         }
 
@@ -671,9 +711,17 @@ class SiteController extends Controller
             }
 
             $user = Yii::$app->user->identity;
+            $request = Yii::$app->request;
+            if ($request->get('embed')) {
+                return $this->renderPartial('_mes_voyages', [
+                    'user' => $user,
+                    'embedded' => true,
+                ]);
+            }
 
             return $this->render('mes-voyages', [
-                'user' => $user
+                'user' => $user,
+                'embedded' => false,
             ]);
         }
 
