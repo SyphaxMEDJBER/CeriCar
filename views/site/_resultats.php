@@ -58,23 +58,28 @@ $correspondances = array_filter($resultats, function ($r) {
                 </div>
             <?php else: ?>
                 <?php
-                    [$h1, $h2] = explode(' → ', $r['heure']);
+                    $heures = preg_split('/\s*→\s*/', (string)($r['heure'] ?? ''), -1, PREG_SPLIT_NO_EMPTY);
+                    if (empty($heures)) {
+                        $heures = [''];
+                    }
+                    $nbCorr = max(count($heures) - 1, 1);
+                    $label = $nbCorr > 1 ? $nbCorr . ' correspondances' : 'Correspondance';
                 ?>
 
                 <div class="corr-summary-block">
                     <div class="bb-time">
                         <div class="bb-track">
                             <span class="bb-bar"></span>
-                            <span class="bb-duration"><?= Html::encode($h1) ?> h</span>
-                            <span class="bb-bar"></span>
-                            <span class="bb-duration"><?= Html::encode($h2) ?> h</span>
-                            <span class="bb-bar"></span>
+                            <?php foreach ($heures as $heure): ?>
+                                <span class="bb-duration"><?= Html::encode($heure) ?> h</span>
+                                <span class="bb-bar"></span>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
                     <div class="bb-cities">
                         <span><?= Html::encode($depart) ?></span>
-                        <span>Correspondance</span>
+                        <span><?= Html::encode($label) ?></span>
                         <span><?= Html::encode($arrivee) ?></span>
                     </div>
                 </div>
@@ -139,23 +144,28 @@ $correspondances = array_filter($resultats, function ($r) {
                         </div>
 
                         <?php
-                            [$h1, $h2] = explode(' → ', $r['heure']);
+                            $heures = preg_split('/\s*→\s*/', (string)($r['heure'] ?? ''), -1, PREG_SPLIT_NO_EMPTY);
+                            if (empty($heures)) {
+                                $heures = [''];
+                            }
+                            $nbCorr = max(count($heures) - 1, 1);
+                            $label = $nbCorr > 1 ? $nbCorr . ' correspondances' : 'Correspondance';
                         ?>
 
                         <div class="corr-summary-block">
                             <div class="bb-time">
                                 <div class="bb-track">
                                     <span class="bb-bar"></span>
-                                    <span class="bb-duration"><?= Html::encode($h1) ?> h</span>
-                                    <span class="bb-bar"></span>
-                                    <span class="bb-duration"><?= Html::encode($h2) ?> h</span>
-                                    <span class="bb-bar"></span>
+                                    <?php foreach ($heures as $heure): ?>
+                                        <span class="bb-duration"><?= Html::encode($heure) ?> h</span>
+                                        <span class="bb-bar"></span>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
 
                             <div class="bb-cities">
                                 <span><?= Html::encode($depart) ?></span>
-                                <span>Correspondance</span>
+                                <span><?= Html::encode($label) ?></span>
                                 <span><?= Html::encode($arrivee) ?></span>
                             </div>
                         </div>

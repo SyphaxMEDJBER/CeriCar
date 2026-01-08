@@ -315,6 +315,54 @@ class SiteController extends Controller
 
 
                     
+                $buildCorrespondance = function (array $segments) use ($nb) {
+                    $voyageIds = [];
+                    $conducteurs = [];
+                    $heures = [];
+                    $marques = [];
+                    $types = [];
+                    $contraintes = [];
+                    $placesMin = null;
+                    $bagagesMin = null;
+                    $prixTotal = 0;
+
+                    foreach ($segments as $segment) {
+                        $v = $segment['voyage'];
+                        $t = $segment['trajet'];
+                        if (!$v || !$t) {
+                            continue;
+                        }
+
+                        $voyageIds[] = $v->id;
+                        $conducteurs[] = $v->conducteurObj->prenom;
+                        $heures[] = $v->heuredepart;
+                        $marques[] = $v->marqueVehicule->marquev;
+                        $types[] = $v->typeVehicule->typev;
+                        $places = $v->getPlacesRestantes();
+                        $placesMin = $placesMin === null ? $places : min($placesMin, $places);
+                        $bagagesMin = $bagagesMin === null ? $v->nbbagage : min($bagagesMin, $v->nbbagage);
+                        if (!empty($v->contraintes)) {
+                            $contraintes[] = $v->contraintes;
+                        }
+                        $prixTotal += $t->distance * $v->tarif;
+                    }
+
+                    return [
+                        'type' => 'correspondance',
+                        'voyage_ids' => $voyageIds,
+                        'conducteur' => implode(' / ', $conducteurs),
+                        'places' => $placesMin ?? 0,
+                        'complet' => $placesMin !== null ? $placesMin < $nb : true,
+                        'prix' => $prixTotal * $nb,
+                        'heure' => implode(' → ', $heures),
+                        'marque' => implode(' / ', $marques),
+                        'typev' => implode(' / ', $types),
+                        'bagages' => $bagagesMin ?? 0,
+                        'contraintes' => trim(implode(' ', $contraintes))
+                    ];
+                };
+
+
                 /* ==============================
                 2️⃣ CORRESPONDANCES A → B → C
                 ============================== */
@@ -323,36 +371,67 @@ class SiteController extends Controller
                     foreach (trajet::getTrajetsDepuis($depart) as $t1) {
 
                         $villeB = $t1->arrivee;
-                        if ($villeB === $arrivee) continue;
+                        if ($villeB === $arrivee || $villeB === $depart) {
+                            continue;
+                        }
 
                         $trajetBC = trajet::getTrajet($villeB, $arrivee);
-                        if (!$trajetBC) continue;
+                        if ($trajetBC) {
+                            foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
+                                foreach (voyage::getVoyagesByTrajetId($trajetBC->id) as $v2) {
 
-                        foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
-                            foreach (voyage::getVoyagesByTrajetId($trajetBC->id) as $v2) {
+                                    if (
+                                        $nb <= $v1->getPlacesRestantes() &&
+                                        $nb <= $v2->getPlacesRestantes() &&
+                                        $v1->heuredepart < $v2->heuredepart
+                                    ) {
+                                        $resultats[] = $buildCorrespondance([
+                                            ['trajet' => $t1, 'voyage' => $v1],
+                                            ['trajet' => $trajetBC, 'voyage' => $v2],
+                                        ]);
+                                        $corrCount++;
+                                    }
+                                }
+                            }
+                        }
 
-                                if (
-                                    $nb <= $v1->getPlacesRestantes() &&
-                                    $nb <= $v2->getPlacesRestantes() &&
-                                    $v1->heuredepart < $v2->heuredepart
-                                ) {
-                                    $resultats[] = [
-                                        'type' => 'correspondance',
-                                        'voyage_ids' => [$v1->id, $v2->id],
-                                        'conducteur' => $v1->conducteurObj->prenom . ' / ' . $v2->conducteurObj->prenom,
-                                        'places' => min($v1->getPlacesRestantes(), $v2->getPlacesRestantes()),
-                                        'complet' => false,
-                                        'prix' => (
-                                            $t1->distance * $v1->tarif +
-                                            $trajetBC->distance * $v2->tarif
-                                        ) * $nb,
-                                        'heure' => $v1->heuredepart . ' → ' . $v2->heuredepart,
-                                        'marque' => $v1->marqueVehicule->marquev . ' / ' . $v2->marqueVehicule->marquev,
-                                        'typev' => $v1->typeVehicule->typev . ' / ' . $v2->typeVehicule->typev,
-                                        'bagages' => min($v1->nbbagage, $v2->nbbagage),
-                                        'contraintes' => trim($v1->contraintes . ' ' . $v2->contraintes)
-                                    ];
-                                    $corrCount++;
+                        /* ==============================
+                        3️⃣ CORRESPONDANCES A → B → C → D
+                        ============================== */
+                        foreach (trajet::getTrajetsDepuis($villeB) as $t2) {
+                            $villeC = $t2->arrivee;
+                            if ($villeC === $arrivee || $villeC === $depart || $villeC === $villeB) {
+                                continue;
+                            }
+
+                            $trajetCD = trajet::getTrajet($villeC, $arrivee);
+                            if (!$trajetCD) {
+                                continue;
+                            }
+
+                            foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
+                                foreach (voyage::getVoyagesByTrajetId($t2->id) as $v2) {
+                                    if (
+                                        $nb > $v1->getPlacesRestantes() ||
+                                        $nb > $v2->getPlacesRestantes() ||
+                                        $v1->heuredepart >= $v2->heuredepart
+                                    ) {
+                                        continue;
+                                    }
+
+                                    foreach (voyage::getVoyagesByTrajetId($trajetCD->id) as $v3) {
+                                        if (
+                                            $nb <= $v3->getPlacesRestantes() &&
+                                            $v2->heuredepart < $v3->heuredepart
+                                        ) {
+                                            $resultats[] = $buildCorrespondance([
+                                                ['trajet' => $t1, 'voyage' => $v1],
+                                                ['trajet' => $t2, 'voyage' => $v2],
+                                                ['trajet' => $trajetCD, 'voyage' => $v3],
+                                            ]);
+                                            $corrCount++;
+                                        }
+                                    }
                                 }
                             }
                         }

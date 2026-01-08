@@ -1,8 +1,6 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
-use Yii;
-
 /** @var $user app\models\Internaute */
 /** @var $vdep array */
 /** @var $varr array */

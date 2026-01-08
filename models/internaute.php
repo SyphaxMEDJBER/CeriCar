@@ -71,7 +71,15 @@ class internaute extends ActiveRecord implements IdentityInterface{
     }
 
     public function validatePassword($password){
-        return md5($password) === $this->pass;
+        $stored = (string)$this->pass;
+        $plain = (string)$password;
+        if ($stored === '') {
+            return false;
+        }
+        if ($stored === $plain) {
+            return true;
+        }
+        return md5($plain) === $stored;
     }
     
     

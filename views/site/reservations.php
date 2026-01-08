@@ -24,76 +24,106 @@ use yii\helpers\Url;
         <?php
             $direct = [];
             $corr = [];
+            $segments = [];
+
             foreach ($reservations as $r) {
                 $v = $r->voyageObj;
                 $trajet = $v ? $v->trajetObj : null;
-                $ids = $v ? [$v->id] : [];
-                $hasMatch = false;
-                $seg1 = $v;
-                $seg2 = null;
-                $t1 = $trajet;
-                $t2 = null;
-
-                if ($v && $trajet) {
-                    $match = null;
-                    $matchTrajet = null;
-                    $matchType = null;
-                    foreach ($reservations as $other) {
-                        if ($other === $r) {
-                            continue;
-                        }
-                        $ov = $other->voyageObj;
-                        $ot = $ov ? $ov->trajetObj : null;
-                        if (!$ov || !$ot) {
-                            continue;
-                        }
-                        if ($trajet->arrivee === $ot->depart && $v->heuredepart < $ov->heuredepart) {
-                            $match = $ov;
-                            $matchTrajet = $ot;
-                            $matchType = 'next';
-                            break;
-                        }
-                        if ($ot->arrivee === $trajet->depart && $ov->heuredepart < $v->heuredepart) {
-                            $match = $ov;
-                            $matchTrajet = $ot;
-                            $matchType = 'prev';
-                            break;
-                        }
-                    }
-
-                    if ($match) {
-                        $hasMatch = true;
-                        if ($matchType === 'prev') {
-                            $seg1 = $match;
-                            $t1 = $matchTrajet;
-                            $seg2 = $v;
-                            $t2 = $trajet;
-                            $ids = [$match->id, $v->id];
-                        } else {
-                            $seg1 = $v;
-                            $t1 = $trajet;
-                            $seg2 = $match;
-                            $t2 = $matchTrajet;
-                            $ids = [$v->id, $match->id];
-                        }
-                    }
-                }
-
-                $entry = [
+                $segments[] = [
                     'r' => $r,
                     'v' => $v,
-                    'trajet' => $trajet,
-                    'ids' => $ids,
-                    'seg1' => $seg1,
-                    'seg2' => $seg2,
-                    't1' => $t1,
-                    't2' => $t2,
+                    't' => $trajet,
+                    'heure' => $v ? (int)$v->heuredepart : null,
+                    'nb' => $r->nbplaceresa,
                 ];
+            }
 
-                if ($hasMatch) {
-                    $corr[] = $entry;
+            usort($segments, function ($a, $b) {
+                $aTime = $a['heure'] ?? PHP_INT_MAX;
+                $bTime = $b['heure'] ?? PHP_INT_MAX;
+                return $aTime <=> $bTime;
+            });
+
+            $used = [];
+            foreach ($segments as $idx => $segment) {
+                if (isset($used[$idx])) {
+                    continue;
+                }
+
+                if (!$segment['v'] || !$segment['t'] || $segment['heure'] === null) {
+                    $used[$idx] = true;
+                    $direct[] = [
+                        'r' => $segment['r'],
+                        'v' => $segment['v'],
+                        'trajet' => $segment['t'],
+                    ];
+                    continue;
+                }
+
+                $chain = [];
+                $currentIdx = $idx;
+
+                while (true) {
+                    if (isset($used[$currentIdx])) {
+                        break;
+                    }
+                    $current = $segments[$currentIdx];
+                    if (!$current['v'] || !$current['t'] || $current['heure'] === null) {
+                        break;
+                    }
+
+                    $used[$currentIdx] = true;
+                    $chain[] = $current;
+
+                    $nextIdx = null;
+                    $nextHour = null;
+
+                    foreach ($segments as $candIdx => $cand) {
+                        if (isset($used[$candIdx])) {
+                            continue;
+                        }
+                        if (!$cand['v'] || !$cand['t'] || $cand['heure'] === null) {
+                            continue;
+                        }
+                        if ((int)$cand['nb'] !== (int)$current['nb']) {
+                            continue;
+                        }
+                        if ($cand['t']->depart !== $current['t']->arrivee) {
+                            continue;
+                        }
+                        if ($cand['heure'] <= $current['heure']) {
+                            continue;
+                        }
+                        if ($nextIdx === null || $cand['heure'] < $nextHour) {
+                            $nextIdx = $candIdx;
+                            $nextHour = $cand['heure'];
+                        }
+                    }
+
+                    if ($nextIdx === null) {
+                        break;
+                    }
+                    $currentIdx = $nextIdx;
+                }
+
+                if (count($chain) >= 2) {
+                    $ids = [];
+                    foreach ($chain as $seg) {
+                        if ($seg['v']) {
+                            $ids[] = $seg['v']->id;
+                        }
+                    }
+                    $corr[] = [
+                        'segments' => $chain,
+                        'ids' => $ids,
+                        'nb' => $chain[0]['r']->nbplaceresa,
+                    ];
                 } else {
-                    $direct[] = $entry;
+                    $direct[] = [
+                        'r' => $segment['r'],
+                        'v' => $segment['v'],
+                        'trajet' => $segment['t'],
+                    ];
                 }
             }
         ?>
@@ -166,21 +196,38 @@ use yii\helpers\Url;
                             <div class="correspondance-grid">
                                 <?php foreach ($corr as $item): ?>
                                     <?php
-                                        $r = $item['r'];
-                                        $seg1 = $item['seg1'];
-                                        $seg2 = $item['seg2'];
-                                        $t1 = $item['t1'];
-                                        $t2 = $item['t2'];
+                                        $segments = $item['segments'];
+                                        $nbPlaces = $item['nb'];
+                                        $ids = $item['ids'];
                                         $priceCorr = 0;
-                                        if ($seg1 && $seg2 && $t1 && $t2) {
-                                            $priceCorr = (($t1->distance ?? 0) * $seg1->tarif + ($t2->distance ?? 0) * $seg2->tarif) * $r->nbplaceresa;
+                                        $heures = [];
+                                        $startTrajet = null;
+                                        $endTrajet = null;
+                                        $isValid = true;
+
+                                        foreach ($segments as $segment) {
+                                            $v = $segment['v'];
+                                            $t = $segment['t'];
+                                            if (!$v || !$t) {
+                                                $isValid = false;
+                                                break;
+                                            }
+                                            $heures[] = $v->heuredepart;
+                                            $priceCorr += ($t->distance ?? 0) * $v->tarif * $nbPlaces;
+                                            if ($startTrajet === null) {
+                                                $startTrajet = $t;
+                                            }
+                                            $endTrajet = $t;
                                         }
+
+                                        $nbCorr = max(count($segments) - 1, 1);
+                                        $label = $nbCorr > 1 ? $nbCorr . ' correspondances' : 'Correspondance';
                                     ?>
                                     <div class="corr-item">
                                         <div class="card search-card h-100 d-flex flex-column card-correspondance"
-                                             data-voyage-ids="<?= Html::encode(implode(',', $item['ids'])) ?>"
-                                             data-nb="<?= Html::encode($r->nbplaceresa) ?>">
-                                            <?php if ($seg1 && $seg2 && $t1 && $t2): ?>
+                                             data-voyage-ids="<?= Html::encode(implode(',', $ids)) ?>"
+                                             data-nb="<?= Html::encode($nbPlaces) ?>">
+                                            <?php if ($isValid && $startTrajet && $endTrajet): ?>
                                                 <div class="card-body">
                                                     <div class="result-header">
                                                         <div class="result-title">Trajet</div>
@@ -190,22 +237,22 @@ use yii\helpers\Url;
                                                         <div class="bb-time">
                                                             <div class="bb-track">
                                                                 <span class="bb-bar"></span>
-                                                                <span class="bb-duration"><?= Html::encode($seg1->heuredepart) ?> h</span>
-                                                                <span class="bb-bar"></span>
-                                                                <span class="bb-duration"><?= Html::encode($seg2->heuredepart) ?> h</span>
-                                                                <span class="bb-bar"></span>
+                                                                <?php foreach ($heures as $heure): ?>
+                                                                    <span class="bb-duration"><?= Html::encode($heure) ?> h</span>
+                                                                    <span class="bb-bar"></span>
+                                                                <?php endforeach; ?>
                                                             </div>
                                                         </div>
                                                         <div class="bb-cities">
-                                                            <span><?= Html::encode($t1->depart) ?></span>
-                                                            <span>Correspondance</span>
-                                                            <span><?= Html::encode($t2->arrivee) ?></span>
+                                                            <span><?= Html::encode($startTrajet->depart) ?></span>
+                                                            <span><?= Html::encode($label) ?></span>
+                                                            <span><?= Html::encode($endTrajet->arrivee) ?></span>
                                                         </div>
                                                     </div>
                                                     <div class="result-meta">
                                                         <div class="meta-row">
                                                             <span class="meta-label">Places reservees</span>
-                                                            <span class="meta-value"><?= Html::encode($r->nbplaceresa) ?></span>
+                                                            <span class="meta-value"><?= Html::encode($nbPlaces) ?></span>
                                                         </div>
                                                     </div>
                                                     <div class="result-toggle">Voir les details</div>

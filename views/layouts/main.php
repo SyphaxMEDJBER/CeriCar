@@ -27,9 +27,6 @@ $this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
 <body>
 <?php $this->beginBody() ?>
 
-<!-- BANDEAU NOTIFICATION -->
-<div id="notif" class="alert text-center m-0 d-none"></div>
-
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg px-4 fixed-top">
     <a class="navbar-brand" href="<?= Url::to(['site/index']) ?>">CeriCar</a>
@@ -78,6 +75,11 @@ $this->registerJsFile('@web/js/auth.js', ['depends' => [JqueryAsset::class]]);
         </ul>
     </div>
 </nav>
+
+<!-- BANDEAU NOTIFICATION -->
+<div class="notif-wrap">
+    <div id="notif" class="alert text-center m-0 d-none"></div>
+</div>
 
 <!-- CONTENU -->
 <main class="container" style="margin-top:30px; min-height:70vh;">

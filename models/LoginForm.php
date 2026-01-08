@@ -26,6 +26,7 @@ class LoginForm extends Model
     public function rules()
     {
         return [
+            ['username', 'filter', 'filter' => 'trim'],
             // username and password are both required
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
@@ -73,7 +74,11 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByPseudo($this->username);
+            $login = trim((string)$this->username);
+            $this->_user = internaute::find()
+                ->where(['pseudo' => $login])
+                ->orWhere(['mail' => $login])
+                ->one();
         }
 
         return $this->_user;

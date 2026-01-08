@@ -38,6 +38,6 @@ class User extends internaute implements IdentityInterface
 
     public function validatePassword($password)
     {
-        return md5($password) === $this->pass;
+        return parent::validatePassword($password);
     }
 }

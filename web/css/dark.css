@@ -20,6 +20,10 @@ body {
     box-shadow: 0 0 15px  #159692;
 }
 
+.notif-wrap {
+    margin-top: 8px;
+}
+
 .navbar-nav{
     margin:0px;
     width: 100%;

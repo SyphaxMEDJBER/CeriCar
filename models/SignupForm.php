@@ -18,11 +18,12 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            [['nom','prenom','pseudo','mail','permis','pass'], 'required'],
+            [['nom','prenom','pseudo','mail','pass'], 'required'],
             ['mail', 'email'],
 
             // IMPORTANT: permis = identifiant => string, pas number
             [['nom','prenom','pseudo','mail','photo','permis'], 'string', 'max' => 45],
+            [['nom','prenom','pseudo','mail','photo','permis'], 'filter', 'filter' => 'trim'],
 
             ['pass', 'string', 'min' => 3],
         ];
