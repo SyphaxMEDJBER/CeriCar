@@ -23,18 +23,17 @@ $this->title = Html::encode('Créer un compte');
       <h1 class="login-title"><?= Html::encode($this->title)?></h1>
       <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
       <div class="alert auth-notif d-none"></div>
-      <?php $form=ActiveForm::begin([
-        'id'=>'signup-form',
+      <?php $form=ActiveForm::begin([ //début du formulaire
+        'id'=>'signup-form', // identifiant du formulaire   
         'fieldConfig'=> [
                 'template' => "{input}\n{error}",
                 'inputOptions' => ['class' => 'form-control input-dark'],
                 'errorOptions' => ['class' => 'invalid-feedback'],
-
           ],
         ]); 
       ?>
-      <?= $form->field($model, 'nom')
-          ->textInput(['placeholder' => "Nom"]) ?>
+      <?= $form->field($model, 'nom')// champ nom
+          ->textInput(['placeholder' => "Nom"]) ?> 
       <?= $form->field($model, 'prenom')
           ->textInput(['placeholder' => "Prénom"]) ?>
       <?= $form->field($model, 'pseudo')
@@ -53,12 +52,12 @@ $this->title = Html::encode('Créer un compte');
           ->passwordInput(['placeholder' => "Password"]) ?>
 
       <div class="form-group mt-3">
-                <?= Html::submitButton('Créer un compte', [
+                <?= Html::submitButton('Créer un compte', [//bouton de soumission
                     'class' => 'btn btn-login',
                     'name' => 'login-button'
                 ]) ?>
       </div>
-      <?php ActiveForm::end();  ?>
+      <?php ActiveForm::end();  ?>//fin du formulaire
 
 
     </div>

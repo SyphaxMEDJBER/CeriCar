@@ -37,13 +37,7 @@ class LoginForm extends Model // Formulaire de connexion.
         ];
     }
 
-    /**
-     * Validation inline du mot de passe via le modèle d’identité.
-     *
-     * @param string $attribute
-     * @param array $params
-     * @return void
-     */
+
     public function validatePassword($attribute, $params) // Vérifie le mot de passe.
     {
         if (!$this->hasErrors()) { // Continue si pas d'autres erreurs.
@@ -55,11 +49,7 @@ class LoginForm extends Model // Formulaire de connexion.
         }
     }
 
-    /**
-     * Tente de connecter l’utilisateur.
-     *
-     * @return bool
-     */
+
     public function login() // Tente la connexion.
     {
         if ($this->validate()) { // Valide d'abord.
@@ -68,11 +58,7 @@ class LoginForm extends Model // Formulaire de connexion.
         return false; // Échec de validation.
     }
 
-    /**
-     * Trouver un utilisateur par pseudo ou email.
-     *
-     * @return internaute|null
-     */
+   
     public function getUser() // Cherche l'utilisateur.
     {
         if ($this->_user === false) { // Si pas encore chargé.

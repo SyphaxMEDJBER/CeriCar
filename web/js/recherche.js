@@ -4,13 +4,12 @@ $(function () { // Lance quand le DOM est pret.
   tryAutoReserve(); // Tente la reservation en attente.
 });
 
-// Utilise des handlers delegues car les resultats sont remplaces en AJAX.
 $(document).on("submit", "#formRecherche", function (e) { // Envoi formulaire recherche.
   e.preventDefault(); // Interdit le rechargement de page.
 
   // Envoie le formulaire sans rechargement de page.
   $.ajax({ // Requete AJAX.
-    url: $(this).attr("action"), // URL du formulaire.
+    url: $(this).attr("action"), // recuperer lurl de l'action du formulaire
     type: "POST", // Methode POST.
     dataType: "json", // Reponse JSON attendue.
     data: $(this).serialize(), // Donnees serializees.
@@ -184,6 +183,8 @@ function tryAutoReserve() { // Rejoue reservation apres login.
   });
 }
 
+
+// quand on reserve on met a jour le nembre de places dispo
 function updatePlacesDispo(places, nb) { // Met a jour les places affichees.
   const nbNeeded = parseInt(nb, 10) || 1; // Nb requis.
 

@@ -2,7 +2,7 @@
 (function ($) { // IIFE avec jQuery.
   "use strict"; // Mode strict.
 
-  // Securite : intercepter uniquement les liens internes.
+  // Utilitaire : verifie qu'un lien est interne.
   function isSameOrigin(url) { // Verifie l'origine.
     try {
       var target = new URL(url, window.location.href); // Parse URL.
@@ -12,6 +12,7 @@
     }
   }
 
+  // Utilitaire : detecte l'URL de login pour ne pas l'intercepter.
   function isLoginUrl(url) { // Detecte la page login.
     try {
       var target = new URL(url, window.location.href); // Parse URL.
@@ -24,6 +25,7 @@
     }
   }
 
+  // Utilitaire : decide si un lien doit etre ignore par l'AJAX.
   function shouldSkipLink($link) { // Decide si on ignore le lien.
     var href = $link.attr("href"); // Href du lien.
     if (!href || href === "#") { // Href vide.
@@ -49,7 +51,7 @@
     return false; // Interception possible.
   }
 
-  // Utilitaire du bandeau global pour succes/alerte/erreur.
+  // Affiche une notification globale dans le bandeau.
   function showGlobalNotif(type, message, errors, html) { // Affiche bandeau.
     var $notif = $("#notif"); // Selection bandeau.
     if (!$notif.length) { // Si absent.
@@ -78,7 +80,7 @@
     $notif.text(message || ""); // Texte simple.
   }
 
-  // Nettoie le bandeau lors d'une navigation.
+  // Cache et reinitialise le bandeau global.
   function clearGlobalNotif() { // Cache bandeau.
     var $notif = $("#notif"); // Selection bandeau.
     if (!$notif.length) { // Si absent.
@@ -88,7 +90,7 @@
     $notif.empty(); // Nettoie contenu.
   }
 
-  // Si le serveur rend une alerte dans le contenu, la recopier dans le bandeau.
+  // Si une alerte est dans le contenu charge, la remonter dans le bandeau.
   function syncNotifFromContent($content) { // Synchronise alertes.
     var $alert = $content.find(".alert:not(.d-none):not(.auth-notif)").first(); // Premiere alerte visible.
     if (!$alert.length) { // Si aucune alerte.
@@ -113,7 +115,7 @@
     $alert.remove(); // Retire l'alerte locale.
   }
 
-  // Remplace le contenu principal + la navbar apres navigation AJAX.
+  // Remplace le contenu principal et met a jour navbar + titre.
   function applyResponse(html, url, pushState) { // Applique la reponse.
     var parser = new DOMParser(); // Parseur HTML.
     var doc = parser.parseFromString(html, "text/html"); // Document temporaire.
@@ -154,7 +156,7 @@
     }
   }
 
-  // Recupere et applique une nouvelle page sans rechargement complet.
+  // Charge une page en AJAX et applique la reponse.
   function loadPage(url, pushState) { // Charge une page.
     clearGlobalNotif(); // Cache bandeau.
     $.ajax({ // Requete AJAX.
@@ -174,6 +176,7 @@
   window.CeriCar = window.CeriCar || {}; // Namespace global.
   window.CeriCar.showGlobalNotif = showGlobalNotif; // Expose helper notif.
 
+  // Interception des clics sur liens internes.
   $(document).on("click", "a", function (e) { // Intercepte tous les liens.
     var $link = $(this); // Lien courant.
     var href = $link.attr("href"); // Href.
@@ -193,6 +196,7 @@
     loadPage(href, false); // Charge contenu.
   });
 
+  // Interception des formulaires pour AJAX global.
   $(document).on("submit", "form", function (e) { // Intercepte formulaires.
     var $form = $(this); // Formulaire courant.
     var id = $form.attr("id"); // ID du formulaire.
@@ -244,6 +248,7 @@
     });
   });
 
+  // Recharge le contenu lors d'un retour navigateur.
   window.addEventListener("popstate", function () { // Navigation historique.
     loadPage(window.location.href, false); // Recharge contenu.
   });

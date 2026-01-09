@@ -1,6 +1,6 @@
 // Gestion des formulaires d'authentification (login/signup) avec retour AJAX.
 $(function () { // Lance quand le DOM est pret.
-  $(document).on("submit", "#login-form, #signup-form", function (e) { // Intercepte submit login/signup.
+  $(document).on("submit", "#login-form, #signup-form", function (e) { // quand on clique sur submit des deux formulaires login et signup
     e.preventDefault(); // Evite le rechargement complet.
 
     // References aux elements du formulaire et au bandeau global.
@@ -10,7 +10,7 @@ $(function () { // Lance quand le DOM est pret.
 
     // Envoie les identifiants via AJAX et traite la reponse JSON.
     $.ajax({ // Requete AJAX.
-      url: $form.attr("action"), // URL du formulaire.
+      url: $form.attr("action"), // URL du formulaire.comme /site/signup
       type: "POST", // Envoi POST.
       dataType: "json", // Reponse JSON attendue.
       data: $form.serialize(), // Donnees serializees.

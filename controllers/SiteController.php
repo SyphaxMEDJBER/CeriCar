@@ -91,24 +91,26 @@ class SiteController extends Controller
         {
             // Si l’utilisateur est déjà connecté
             if (!Yii::$app->user->isGuest) {
-                return $this->goHome();
+                return $this->goHome(); // Redirection vers la page d'accueil.
             }
 
             // Mémorise l’URL de retour si fournie (ex: après réservation).
             $returnUrl = Yii::$app->request->get('returnUrl');
             if (!empty($returnUrl)) {
+                // Cette URL sera utilisée après une connexion réussie.
                 Yii::$app->user->setReturnUrl($returnUrl);
             }
 
-            // Crée le formulaire de connexion
+            // Crée le formulaire de connexion (validation + login).
             $model = new LoginForm();
 
-            // Si le formulaire est envoyé et les identifiants sont corrects
+            // Si le formulaire est envoyé (POST), on tente la connexion.
             if ($model->load(Yii::$app->request->post())) {
                 // Mode AJAX : on renvoie un JSON pour auth.js.
                 if (Yii::$app->request->isAjax) {
                     if ($model->login()) {
-                        $redirect = Yii::$app->user->getReturnUrl(['site/index']);
+                        // Connexion OK : URL de redirection (page precedente ou accueil).
+                        $redirect = Yii::$app->user->getReturnUrl(['site/index']); // Par defaut: accueil.
                         return $this->asJson([
                             'status' => 'success',
                             'message' => 'Connexion reussie.',
@@ -116,6 +118,7 @@ class SiteController extends Controller
                         ]);
                     }
 
+                    // Echec de login : renvoie erreurs de validation.
                     return $this->asJson([
                         'status' => 'error',
                         'message' => 'Identifiants invalides.',
@@ -123,17 +126,17 @@ class SiteController extends Controller
                     ]);
                 }
 
-                // Mode classique : on redirige vers la page précédente.
+                // Mode classique (non-AJAX) : redirection vers la page precedente.
                 if ($model->login()) {
-                    // Connexion réussie → accueil
+                    // Connexion reussie -> retour page precedente.
                     return $this->goBack();
                 }
             }
 
-            // Vide le champ mot de passe
+            // Vide le champ mot de passe avant affichage.
             $model->password = '';
 
-            // Affiche le formulaire de connexion
+            // Affiche le formulaire de connexion.
             return $this->render('login', [
                 'model' => $model
             ]);
@@ -225,14 +228,16 @@ class SiteController extends Controller
          */
         public function actionSignup()
         {
-            $model = new \app\models\SignupForm();
+            $model = new \app\models\SignupForm(); // Formulaire d'inscription (validation + création).
 
-            if (Yii::$app->request->isPost) {
-                // Mode AJAX : le JS gère l’affichage des erreurs/succès.
+            if (Yii::$app->request->isPost) {//si le fromulaire est envoye
+                // Mode AJAX : auth.js gère l’affichage des erreurs/succès.
                 if (Yii::$app->request->isAjax) {
+                    // On charge les données et on valide avant création.
                     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-                        $user = $model->signup();
-                        if ($user) {
+                        $user = $model->signup(); // Crée l'utilisateur en base.
+                        if ($user) { //si utilisateur cree
+                            // Réponse JSON de succès + redirection vers la connexion.
                             return $this->asJson([
                                 'status' => 'success',
                                 'message' => 'Compte cree avec succes.',
@@ -240,12 +245,14 @@ class SiteController extends Controller
                             ]);
                         }
 
+                        // Création impossible malgré validation.
                         return $this->asJson([
                             'status' => 'error',
                             'message' => "Erreur lors de l'inscription.",
                         ]);
                     }
 
+                    // Validation KO : on renvoie les erreurs de champs.
                     return $this->asJson([
                         'status' => 'error',
                         'message' => 'Veuillez corriger les erreurs.',
@@ -253,13 +260,14 @@ class SiteController extends Controller
                     ]);
                 }
 
-                // Mode classique : création puis redirection vers la connexion.
+                // Mode classique (non-AJAX) : création puis redirection vers la connexion.
                 if ($model->signup()) {
                     Yii::$app->session->setFlash('success', 'Compte créé avec succès.');
                     return $this->redirect(['site/login']);
                 }
             }
 
+            // GET initial : affiche le formulaire.
             return $this->render('signup', ['model' => $model]);
         }
 
@@ -268,14 +276,7 @@ class SiteController extends Controller
 
                     
     
-        /**
-         * Page de recherche avec résultats.
-         *
-         * - AJAX : retourne du JSON (HTML partiel + notif)
-         * - Non-AJAX : affiche la page complète
-         *
-         * @return string|Response JSON ou HTML rendu.
-         */
+
         public function actionRecherche()
         {
 
@@ -320,7 +321,7 @@ class SiteController extends Controller
                         if($nb<=$v->nbplacedispo){
                             
                             
-                            $placesRestantes = $v->getPlacesRestantes();//
+                            $placesRestantes = $v->getPlacesRestantes();//places restantes pour ce voyage
                             $complet = ($placesRestantes < $nb);//true si complet
                             
                             // Prix total pour tous les voyageurs.
@@ -335,6 +336,7 @@ class SiteController extends Controller
                                 'complet'     => $complet,
                                 'prix'        => $prixTotal,
                                 'heure'       => $v->heuredepart,
+                                'arrivee_heure' => $v->getHeureArrivee($trajet->distance),
                                 'distance'    => $trajet->distance,
                                 'marque'      => $v->marqueVehicule->marquev,
                                     'typev'        => $v->typeVehicule->typev,
@@ -364,7 +366,7 @@ class SiteController extends Controller
                     $placesMin = null;
                     $bagagesMin = null;
                     $prixTotal = 0;
-
+                    //pour chaque correspondances
                     foreach ($segments as $segment) {
                         $v = $segment['voyage'];
                         $t = $segment['trajet'];
@@ -403,7 +405,7 @@ class SiteController extends Controller
                     ];
                 };
 
-                // Calcule les minutes de départ/arrivée pour comparer les correspondances.
+                // Calcule les minutes de départ/arrivée pour comparer les correspondances. 
                 $getDepartMinutes = function ($voyage) {
                     return (int)$voyage->heuredepart * 60; // Heure départ (h) -> minutes.
                 };
@@ -421,28 +423,28 @@ class SiteController extends Controller
 
                     foreach (trajet::getTrajetsDepuis($depart) as $t1) {
 
-                        $villeB = $t1->arrivee;
+                        $villeB = $t1->arrivee;//la ville b est la ville de depart du 2eme trajet
                         // Évite les boucles et le trajet direct déjà traité.
-                        if ($villeB === $arrivee || $villeB === $depart) {
+                        if ($villeB === $arrivee || $villeB === $depart) { //si la ville b est la ville d'arrivee ou de depart on passe au suivant
                             continue;
                         }
 
-                        $trajetBC = trajet::getTrajet($villeB, $arrivee);
+                        $trajetBC = trajet::getTrajet($villeB, $arrivee);//b c 
                         if ($trajetBC) {
-                            foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
+                            foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {//on verifie si les contrainte sont respectees
                                 foreach (voyage::getVoyagesByTrajetId($trajetBC->id) as $v2) {
 
                                     // Vérifie places et cohérence temporelle entre segments.
                                     if (
-                                        $nb <= $v1->getPlacesRestantes() &&
+                                        $nb <= $v1->getPlacesRestantes() && //contraintes places
                                         $nb <= $v2->getPlacesRestantes() &&
-                                        $getArriveeMinutes($v1, $t1) < $getDepartMinutes($v2)
+                                        $getArriveeMinutes($v1, $t1) < $getDepartMinutes($v2)//contriante horaire
                                     ) {
                                         $resultats[] = $buildCorrespondance([
                                             ['trajet' => $t1, 'voyage' => $v1],
                                             ['trajet' => $trajetBC, 'voyage' => $v2],
                                         ]);
-                                        $corrCount++;
+                                        $corrCount++;//le nombre de correspondance augmente
                                     }
                                 }
                             }
@@ -451,7 +453,7 @@ class SiteController extends Controller
                         /* ==============================
                         3️⃣ CORRESPONDANCES A → B → C → D
                         ============================== */
-                        foreach (trajet::getTrajetsDepuis($villeB) as $t2) {
+                        foreach (trajet::getTrajetsDepuis($villeB) as $t2) { 
                             $villeC = $t2->arrivee;
                             // Évite les cycles et les doublons.
                             if ($villeC === $arrivee || $villeC === $depart || $villeC === $villeB) {
@@ -467,9 +469,9 @@ class SiteController extends Controller
                                 foreach (voyage::getVoyagesByTrajetId($t2->id) as $v2) {
                                     // Respecte l’ordre des segments et les places.
                                     if (
-                                        $nb > $v1->getPlacesRestantes() ||
+                                        $nb > $v1->getPlacesRestantes() ||//contraintes places
                                         $nb > $v2->getPlacesRestantes() ||
-                                        $getArriveeMinutes($v1, $t1) >= $getDepartMinutes($v2)
+                                        $getArriveeMinutes($v1, $t1) >= $getDepartMinutes($v2)//contraintes horaire
                                     ) {
                                         continue;
                                     }
@@ -572,6 +574,7 @@ class SiteController extends Controller
                     'depart' => $trajet ? $trajet->depart : null,
                     'arrivee' => $trajet ? $trajet->arrivee : null,
                     'heure' => $voyage->heuredepart,
+                    'arrivee_heure' => $trajet ? $voyage->getHeureArrivee($trajet->distance) : null,
                     'distance' => $trajet ? $trajet->distance : null,
                     'marque' => $voyage->marqueVehicule ? $voyage->marqueVehicule->marquev : null,
                     'typev' => $voyage->typeVehicule ? $voyage->typeVehicule->typev : null,
@@ -772,6 +775,7 @@ class SiteController extends Controller
                 'embedded' => false,
             ]);
         }
+
 
         /**
          * Liste des réservations.

@@ -18,11 +18,7 @@ class SignupForm extends Model // Formulaire d'inscription.
     public $photo; // URL photo.
     public $pass; // Mot de passe.
 
-    /**
-     * Règles de validation de l’inscription.
-     *
-     * @return array
-     */
+
     public function rules() // Règles de validation.
     {
         return [
@@ -40,11 +36,7 @@ class SignupForm extends Model // Formulaire d'inscription.
         ];
     }
 
-    /**
-     * Crée un nouvel utilisateur à partir du formulaire.
-     *
-     * @return internaute|null
-     */
+
     public function signup() // Crée l'utilisateur.
     {
         if (!$this->load(Yii::$app->request->post()) || !$this->validate()) { // Charge + valide.
@@ -70,13 +62,7 @@ class SignupForm extends Model // Formulaire d'inscription.
         return $u->save(false) ? $u : null; // Sauve sans revalider.
     }
 
-    /**
-     * Vérifie que l'email n'existe pas déjà.
-     *
-     * @param string $attribute
-     * @param array $params
-     * @return void
-     */
+    //verifie que l'email n'existe pas déjà dans la table internaute
     public function validateMailUnique($attribute, $params)
     {
         if ($this->hasErrors()) { // Stop si erreurs existantes.
@@ -93,13 +79,7 @@ class SignupForm extends Model // Formulaire d'inscription.
         }
     }
 
-    /**
-     * Vérifie que le pseudo n'existe pas déjà.
-     *
-     * @param string $attribute
-     * @param array $params
-     * @return void
-     */
+
     public function validatePseudoUnique($attribute, $params)
     {
         if ($this->hasErrors()) { // Stop si erreurs existantes.

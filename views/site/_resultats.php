@@ -1,19 +1,10 @@
 <?php
 // Partiel : cartes de résultats (directs + correspondances).
 use yii\helpers\Html;
-
-$formatArrivee = function ($heureDepart, $distanceKm) {
-    $departMin = (int)$heureDepart * 60;
-    $dureeMin = (int)round((float)$distanceKm);
-    $arriveeMin = $departMin + $dureeMin;
-    $h = (int)floor($arriveeMin / 60) % 24;
-    $m = $arriveeMin % 60;
-    return sprintf('%02d:%02d', $h, $m);
-};
 ?>
 
 <?php
-// Sépare les résultats par type pour les sections.
+// Sépare les résultats par type pour afficher 2 sections.
 $directs = array_filter($resultats, function ($r) {
     return isset($r['type']) && $r['type'] === 'direct';
 });
@@ -28,6 +19,7 @@ $correspondances = array_filter($resultats, function ($r) {
 </div>
 <?php foreach ($directs as $r): ?>
 <div class="col-md-6 col-lg-4 corr-col">
+    <!-- Carte d'un voyage direct -->
     <div class="card search-card h-100 d-flex flex-column <?= $r['complet'] ? 'card-complet' : '' ?>">
 
         <div class="card-body">
@@ -44,6 +36,7 @@ $correspondances = array_filter($resultats, function ($r) {
             </div>
 
             <?php if ($r['type'] === 'direct'): ?>
+                <!-- Bloc infos direct : horaires, villes, vehicule -->
                 <div class="bb-time">
                     <div class="bb-track">
                         <span class="bb-bar"></span>
@@ -69,11 +62,12 @@ $correspondances = array_filter($resultats, function ($r) {
                     <div class="meta-row">
                         <span class="meta-label">Arrivee</span>
                         <span class="meta-value">
-                            <?= Html::encode($formatArrivee($r['heure'], $r['distance'] ?? 0)) ?>
+                            <?= Html::encode($r['arrivee_heure'] ?? '') ?>
                         </span>
                     </div>
                 </div>
             <?php else: ?>
+                <!-- Bloc resume correspondance (affichage compact) -->
                 <?php
                     $heures = preg_split('/\s*→\s*/', (string)($r['heure'] ?? ''), -1, PREG_SPLIT_NO_EMPTY);
                     if (empty($heures)) {
@@ -119,6 +113,7 @@ $correspondances = array_filter($resultats, function ($r) {
                 <?= number_format($r['prix'], 2) ?> €
             </div>
 
+            <!-- Bouton de reservation (identifie les voyages via data-voyage-ids) -->
             <button
                 class="btn btn-sm btn-reserver"
                 data-voyage-ids="<?= implode(',', $r['voyage_ids']) ?>"
@@ -138,9 +133,11 @@ $correspondances = array_filter($resultats, function ($r) {
     <h3 class="result-section-title">Voyages avec correspondance</h3>
 </div>
 <div class="col-12">
+    <!-- Grille des correspondances -->
     <div class="correspondance-grid">
         <?php foreach ($correspondances as $r): ?>
             <div class="corr-item">
+                <!-- Carte correspondance (charge les details en AJAX au clic) -->
                 <div
                     class="card search-card h-100 d-flex flex-column <?= $r['complet'] ? 'card-complet' : '' ?> card-correspondance"
                     data-voyage-ids="<?= Html::encode(implode(',', $r['voyage_ids'])) ?>"

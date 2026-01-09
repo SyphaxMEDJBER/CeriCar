@@ -99,6 +99,21 @@ class voyage extends ActiveRecord{ // Classe Voyage.
       return $this->nbplacedispo - $reservations; // Places restantes.
   }
 
+  /**
+   * Heure d'arrivee approximative (1 km = 1 minute).
+   *
+   * @param float|int $distanceKm
+   * @return string
+   */
+  public function getHeureArrivee($distanceKm)
+  {
+      $departMin = (int)$this->heuredepart * 60;
+      $dureeMin = (int)round((float)$distanceKm);
+      $arriveeMin = $departMin + $dureeMin;
+      $h = (int)floor($arriveeMin / 60) % 24;
+      $m = $arriveeMin % 60;
+      return sprintf('%02d:%02d', $h, $m);
+  }
 
 
 

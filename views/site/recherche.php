@@ -7,7 +7,7 @@ $this->title = "Recherche de voyage";
 <!-- Formulaire de recherche (soumis en AJAX dans recherche.js) -->
 <div class="container">
 <?= Html::beginForm(['site/recherche'], 'post', [
-    'id' => 'formRecherche',
+    'id' => 'formRecherche',//l'id de formulaire de recherche 
     'class' => 'search-bar'
 ]) ?>
 
@@ -57,13 +57,14 @@ $this->title = "Recherche de voyage";
 </div>
 
 <!-- Conteneur des résultats (remplacé par la réponse AJAX) -->
+ <!-- quand on clk sur rechercher ce div est remplace par le html envoye par le serveur -->
 <div
     id="resultats"
     class="row g-4 mt-4"
     data-details-url="<?= Url::to(['site/correspondance-details']) ?>"
     data-reserver-url="<?= \yii\helpers\Url::to(['site/reserver']) ?>">
     <?php if (!empty($resultats)): ?>
-        <?= $this->render('_resultats', [
+        <?= $this->render('_resultats', [ 
             'resultats' => $resultats,
             'depart' => $depart ?? null,
             'arrivee' => $arrivee ?? null,

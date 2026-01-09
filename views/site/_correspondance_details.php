@@ -1,15 +1,6 @@
 <?php
 // Partiel : détails des correspondances (chargés via AJAX).
 use yii\helpers\Html;
-
-$formatArrivee = function ($heureDepart, $distanceKm) {
-    $departMin = (int)$heureDepart * 60;
-    $dureeMin = (int)round((float)$distanceKm);
-    $arriveeMin = $departMin + $dureeMin;
-    $h = (int)floor($arriveeMin / 60) % 24;
-    $m = $arriveeMin % 60;
-    return sprintf('%02d:%02d', $h, $m);
-};
 ?>
 
 <?php if (empty($segments)): ?>
@@ -67,11 +58,11 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                                     <span class="meta-value"><?= Html::encode($segment['places']) ?></span>
                                 </div>
                                 <div class="meta-row">
-                                    <span class="meta-label">Arrivee</span>
-                                    <span class="meta-value">
-                                        <?= Html::encode($formatArrivee($segment['heure'], $segment['distance'] ?? 0)) ?>
-                                    </span>
-                                </div>
+                                <span class="meta-label">Arrivee</span>
+                                <span class="meta-value">
+                                    <?= Html::encode($segment['arrivee_heure'] ?? '') ?>
+                                </span>
+                            </div>
                             </div>
 
                             <?php if (!empty($segment['contraintes'])): ?>
