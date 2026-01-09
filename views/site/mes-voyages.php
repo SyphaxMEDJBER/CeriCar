@@ -1,5 +1,6 @@
 <?php
 /** @var $user app\models\Internaute */
+// Enveloppe page complète pour la liste des voyages.
 ?>
 
 <div class="page-shell">

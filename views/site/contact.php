@@ -8,6 +8,7 @@ use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\captcha\Captcha;
 
+// Page contact : formulaire + message de confirmation.
 $this->title = 'Contact';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

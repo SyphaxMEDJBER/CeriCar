@@ -7,6 +7,7 @@
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
+// Formulaire de connexion rendu par ActiveForm et géré par auth.js en AJAX.
 $this->title = Html::encode('Se connecter');
 $this->params['breadcrumbs'][] = $this->title;
 ?>

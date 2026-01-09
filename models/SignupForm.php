@@ -1,54 +1,118 @@
 <?php
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use Yii;
-use yii\base\Model;
-use app\models\internaute;
+use Yii; // Accès aux composants Yii.
+use yii\base\Model; // Base des formulaires Yii.
+use app\models\internaute; // Modèle utilisateur.
 
-class SignupForm extends Model
+/**
+ * SignupForm gère l’inscription et la création d’utilisateur.
+ */
+class SignupForm extends Model // Formulaire d'inscription.
 {
-    public $nom;
-    public $prenom;
-    public $pseudo;
-    public $mail;
-    public $permis;
-    public $photo;
-    public $pass;
+    public $nom; // Nom.
+    public $prenom; // Prénom.
+    public $pseudo; // Pseudo.
+    public $mail; // Email.
+    public $permis; // Permis.
+    public $photo; // URL photo.
+    public $pass; // Mot de passe.
 
-    public function rules()
+    /**
+     * Règles de validation de l’inscription.
+     *
+     * @return array
+     */
+    public function rules() // Règles de validation.
     {
         return [
-            [['nom','prenom','pseudo','mail','pass'], 'required'],
-            ['mail', 'email'],
+            [['nom','prenom','pseudo','mail','pass'], 'required'], // Champs requis.
+            ['mail', 'email'], // Format email.
 
-            // IMPORTANT: permis = identifiant => string, pas number
-            [['nom','prenom','pseudo','mail','photo','permis'], 'string', 'max' => 45],
-            [['nom','prenom','pseudo','mail','photo','permis'], 'filter', 'filter' => 'trim'],
+            // IMPORTANT : permis = identifiant => chaîne, pas nombre
+            [['nom','prenom','pseudo','mail','photo','permis'], 'string', 'max' => 45], // Longueur max.
+            [['nom','prenom','pseudo','mail','photo','permis'], 'filter', 'filter' => 'trim'], // Nettoyage.
+            ['pass', 'filter', 'filter' => 'trim'], // Nettoyage mot de passe.
 
-            ['pass', 'string', 'min' => 3],
+            ['pass', 'string', 'min' => 3], // Longueur min du mot de passe.
+            ['mail', 'validateMailUnique'], // Email unique.
+            ['pseudo', 'validatePseudoUnique'], // Pseudo unique.
         ];
     }
 
-    public function signup()
+    /**
+     * Crée un nouvel utilisateur à partir du formulaire.
+     *
+     * @return internaute|null
+     */
+    public function signup() // Crée l'utilisateur.
     {
-        if (!$this->load(Yii::$app->request->post()) || !$this->validate()) {
-            return null;
+        if (!$this->load(Yii::$app->request->post()) || !$this->validate()) { // Charge + valide.
+            return null; // Échec si invalide.
         }
 
-        $u = new internaute();
-        $u->nom    = $this->nom;
-        $u->prenom = $this->prenom;
-        $u->pseudo = $this->pseudo;
-        $u->mail   = $this->mail;
+        $u = new internaute(); // Nouvelle entité.
+        // Champs de profil de base.
+        $u->nom    = $this->nom; // Affecte le nom.
+        $u->prenom = $this->prenom; // Affecte le prénom.
+        $u->pseudo = $this->pseudo; // Affecte le pseudo.
+        $u->mail   = $this->mail; // Affecte l'email.
 
-        // LE POINT CRITIQUE
-        $u->permis = (string)$this->permis;
+        // Le permis est stocké comme chaîne dans ce schéma.
+        $u->permis = (string)$this->permis; // Cast en string.
 
-        // si vide => mets une image par défaut courte (<=45)
-        $u->photo  = $this->photo ?: 'default.png';
+        // Photo par défaut si non fournie.
+        $u->photo  = $this->photo ?: 'default.png'; // Valeur par défaut.
 
-        $u->pass   = md5($this->pass);
+        // Stocke en md5 pour compatibilité héritée.
+        $u->pass   = md5($this->pass); // Hash md5.
 
-        return $u->save(false) ? $u : null;
+        return $u->save(false) ? $u : null; // Sauve sans revalider.
+    }
+
+    /**
+     * Vérifie que l'email n'existe pas déjà.
+     *
+     * @param string $attribute
+     * @param array $params
+     * @return void
+     */
+    public function validateMailUnique($attribute, $params)
+    {
+        if ($this->hasErrors()) { // Stop si erreurs existantes.
+            return;
+        }
+
+        $mail = trim((string)$this->$attribute); // Normalise l'email.
+        if ($mail === '') { // Laisse la règle required gérer le vide.
+            return;
+        }
+
+        if (internaute::find()->where(['mail' => $mail])->exists()) { // Vérifie l'existence.
+            $this->addError($attribute, 'Email déjà utilisé.'); // Ajoute l'erreur.
+        }
+    }
+
+    /**
+     * Vérifie que le pseudo n'existe pas déjà.
+     *
+     * @param string $attribute
+     * @param array $params
+     * @return void
+     */
+    public function validatePseudoUnique($attribute, $params)
+    {
+        if ($this->hasErrors()) { // Stop si erreurs existantes.
+            return;
+        }
+
+        $pseudo = trim((string)$this->$attribute); // Normalise le pseudo.
+        if ($pseudo === '') { // Laisse la règle required gérer le vide.
+            return;
+        }
+
+        if (internaute::find()->where(['pseudo' => $pseudo])->exists()) { // Vérifie l'existence.
+            $this->addError($attribute, 'Pseudo déjà utilisé.'); // Ajoute l'erreur.
+        }
     }
 }

@@ -1,45 +1,77 @@
 <?php
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use yii\db\ActiveRecord;
-use app\models\internaute;
-use app\models\reservation;
-use app\models\trajet;
-use app\models\typevehicule;
-use app\models\marquevehicule;
+use yii\db\ActiveRecord; // ActiveRecord pour l'accès BDD.
+use app\models\internaute; // Modèle Internaute (relation).
+use app\models\reservation; // Modèle Reservation (relation).
+use app\models\trajet; // Modèle Trajet (relation).
+use app\models\typevehicule; // Modèle TypeVehicule (relation).
+use app\models\marquevehicule; // Modèle MarqueVehicule (relation).
 
-class voyage extends ActiveRecord{
+/**
+ * Modèle Voyage (instance de trajet).
+ */
+class voyage extends ActiveRecord{ // Classe Voyage.
 
-  public static function tableName(){
-    return 'fredouil.voyage';
+  /**
+   * @return string
+   */
+  public static function tableName(){ // Nom de table.
+    return 'fredouil.voyage'; // Table SQL cible.
   }
 
-  public function getConducteurObj(){
-    return $this->hasOne(internaute::class,['id'=>'conducteur']);
+  /**
+   * Conducteur (utilisateur) pour ce voyage.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+  public function getConducteurObj(){ // Relation vers conducteur.
+    return $this->hasOne(internaute::class,['id'=>'conducteur']); // FK voyage.conducteur => internaute.id
   }
 
-  public function getReservations(){
-    return $this->hasMany(reservation::class,['voyage'=>'id']);
+  /**
+   * Réservations pour ce voyage.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+  public function getReservations(){ // Relation vers réservations.
+    return $this->hasMany(reservation::class,['voyage'=>'id']); // FK reservation.voyage => voyage.id
   }
 
   // public function getVoyageurs(){
   //   return $this->hasMany(internaute::class,[''])
   // }
 
-  public function getTrajetObj(){
-    return $this->hasOne(trajet::class,['id'=>'trajet']);
+  public function getTrajetObj(){ // Relation vers trajet.
+    return $this->hasOne(trajet::class,['id'=>'trajet']); // FK voyage.trajet => trajet.id
   }
 
-  public function getTypeVehicule(){
-    return $this->hasOne(typevehicule::class,['id'=>'idtypev']);
+  /**
+   * Type de véhicule pour ce voyage.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+  public function getTypeVehicule(){ // Relation vers type véhicule.
+    return $this->hasOne(typevehicule::class,['id'=>'idtypev']); // FK voyage.idtypev => typevehicule.id
   }
 
-    public function getMarqueVehicule(){
-    return $this->hasOne(marquevehicule::class,['id'=>'idmarquev']);
+  /**
+   * Marque du véhicule pour ce voyage.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+    public function getMarqueVehicule(){ // Relation vers marque véhicule.
+    return $this->hasOne(marquevehicule::class,['id'=>'idmarquev']); // FK voyage.idmarquev => marquevehicule.id
   }
 
-  public static function getVoyagesByTrajetId($idTrajet){
-    return self::findAll(['trajet'=>$idTrajet]);
+  /**
+   * Trouver les voyages par id de trajet.
+   *
+   * @param int $idTrajet
+   * @return static[]
+   */
+  public static function getVoyagesByTrajetId($idTrajet){ // Voyages par trajet.
+    return self::findAll(['trajet'=>$idTrajet]); // Tous les voyages liés.
 
   }
 
@@ -48,17 +80,23 @@ class voyage extends ActiveRecord{
 
 
 
-  public function getPlacesRestantes()
+  /**
+   * Places restantes en tenant compte des réservations.
+   *
+   * @return int
+   */
+  public function getPlacesRestantes() // Calcul des places restantes.
   {
-      $reservations = reservation::find()
-          ->where(['voyage' => $this->id])
-          ->sum('nbplaceresa');
+      // Somme des places réservées pour ce voyage.
+      $reservations = reservation::find() // Démarre la requête.
+          ->where(['voyage' => $this->id]) // Filtre par voyage.
+          ->sum('nbplaceresa'); // Somme des réservations.
 
-      if ($reservations === null) {
-          $reservations = 0;
+      if ($reservations === null) { // Si aucune réservation.
+          $reservations = 0; // Initialise à 0.
       }
 
-      return $this->nbplacedispo - $reservations;
+      return $this->nbplacedispo - $reservations; // Places restantes.
   }
 
 

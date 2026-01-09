@@ -4,6 +4,7 @@ use yii\helpers\Url;
 
 $this->title = "CeriCar – Trouvez votre voyage";
 
+// Blocs marketing de la page d’accueil (hero + trajets populaires).
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -11,6 +12,7 @@ error_reporting(E_ALL);
 
 ?>
 
+<!-- HERO : contenu d’intro -->
 <div class="container hero">
 
     <!-- TEXTE À GAUCHE -->
@@ -29,6 +31,7 @@ error_reporting(E_ALL);
 </div>
 
 
+<!-- Mise en avant des trajets populaires -->
 <h2 id="tp">Trajets populaires</h2>
 
 <div class="popular-container">
@@ -62,6 +65,7 @@ error_reporting(E_ALL);
 
 
 
+<!-- Second bloc hero -->
 <div class="container hero">
 
     <!-- TEXTE À GAUCHE -->

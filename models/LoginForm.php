@@ -1,86 +1,89 @@
 <?php
 
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use Yii;
-use yii\base\Model;
+use Yii; // Accès aux composants Yii.
+use yii\base\Model; // Base des formulaires Yii.
 
 /**
- * LoginForm is the model behind the login form.
+ * LoginForm gère les entrées d’authentification et la validation.
  *
- * @property-read User|null $user
- *
+ * @property-read internaute|null $user
  */
-class LoginForm extends Model
+class LoginForm extends Model // Formulaire de connexion.
 {
-    public $username;
-    public $password;
-    public $rememberMe = true;
+    public $username; // Champ identifiant (pseudo ou email).
+    public $password; // Champ mot de passe.
+    public $rememberMe = true; // Option "se souvenir".
 
-    private $_user = false;
+    private $_user = false; // Cache utilisateur trouvé.
 
 
     /**
-     * @return array the validation rules.
+     * Règles de validation du formulaire de connexion.
+     *
+     * @return array
      */
-    public function rules()
+    public function rules() // Règles de validation.
     {
         return [
-            ['username', 'filter', 'filter' => 'trim'],
-            // username and password are both required
-            [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+            ['username', 'filter', 'filter' => 'trim'], // Nettoie l'identifiant.
+            // identifiant et mot de passe sont obligatoires
+            [['username', 'password'], 'required'], // Champs obligatoires.
+            // rememberMe doit être un booléen
+            ['rememberMe', 'boolean'], // Type booléen requis.
+            // mot de passe validé par validatePassword()
+            ['password', 'validatePassword'], // Validation custom du mot de passe.
         ];
     }
 
     /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
+     * Validation inline du mot de passe via le modèle d’identité.
      *
-     * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
+     * @param string $attribute
+     * @param array $params
+     * @return void
      */
-    public function validatePassword($attribute, $params)
+    public function validatePassword($attribute, $params) // Vérifie le mot de passe.
     {
-        if (!$this->hasErrors()) {
-            $user = $this->getUser();
+        if (!$this->hasErrors()) { // Continue si pas d'autres erreurs.
+            $user = $this->getUser(); // Récupère l'utilisateur.
 
-            if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+            if (!$user || !$user->validatePassword($this->password)) { // Mot de passe invalide.
+                $this->addError($attribute, 'Incorrect username or password.'); // Ajoute l'erreur.
             }
         }
     }
 
     /**
-     * Logs in a user using the provided username and password.
-     * @return bool whether the user is logged in successfully
+     * Tente de connecter l’utilisateur.
+     *
+     * @return bool
      */
-    public function login()
+    public function login() // Tente la connexion.
     {
-        if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+        if ($this->validate()) { // Valide d'abord.
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0); // Login Yii.
         }
-        return false;
+        return false; // Échec de validation.
     }
 
     /**
-     * Finds user by [[username]]
+     * Trouver un utilisateur par pseudo ou email.
      *
-     * @return User|null
+     * @return internaute|null
      */
-    public function getUser()
+    public function getUser() // Cherche l'utilisateur.
     {
-        if ($this->_user === false) {
-            $login = trim((string)$this->username);
-            $this->_user = internaute::find()
-                ->where(['pseudo' => $login])
-                ->orWhere(['mail' => $login])
-                ->one();
+        if ($this->_user === false) { // Si pas encore chargé.
+            $login = trim((string)$this->username); // Normalise l'entrée.
+            // Autorise la connexion par pseudo OU par email.
+            $this->_user = internaute::find() // Démarre la requête.
+                ->where(['pseudo' => $login]) // Condition pseudo.
+                ->orWhere(['mail' => $login]) // Condition email.
+                ->one(); // Récupère un utilisateur.
         }
 
-        return $this->_user;
+        return $this->_user; // Retourne l'utilisateur (ou null).
     }
 }

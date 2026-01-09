@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use app\assets\AppAsset;
 
+// Layout principal : navbar + notification globale + contenu + footer.
 AppAsset::register($this);
 JqueryAsset::register($this);
 $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]]);
@@ -84,6 +85,7 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
     <div class="notif-wrap">
         <div id="notif" class="alert text-center m-0 d-none"></div>
     </div>
+    <!-- Contenu dynamique remplacé par la navigation AJAX -->
     <div id="page-content">
         <?= $content ?>
     </div>

@@ -1,8 +1,19 @@
 <?php
+// Partiel : cartes de résultats (directs + correspondances).
 use yii\helpers\Html;
+
+$formatArrivee = function ($heureDepart, $distanceKm) {
+    $departMin = (int)$heureDepart * 60;
+    $dureeMin = (int)round((float)$distanceKm);
+    $arriveeMin = $departMin + $dureeMin;
+    $h = (int)floor($arriveeMin / 60) % 24;
+    $m = $arriveeMin % 60;
+    return sprintf('%02d:%02d', $h, $m);
+};
 ?>
 
 <?php
+// Sépare les résultats par type pour les sections.
 $directs = array_filter($resultats, function ($r) {
     return isset($r['type']) && $r['type'] === 'direct';
 });
@@ -54,6 +65,12 @@ $correspondances = array_filter($resultats, function ($r) {
                     <div class="meta-row">
                         <span class="meta-label">Bagages</span>
                         <span class="meta-value"><?= Html::encode($r['bagages']) ?></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Arrivee</span>
+                        <span class="meta-value">
+                            <?= Html::encode($formatArrivee($r['heure'], $r['distance'] ?? 0)) ?>
+                        </span>
                     </div>
                 </div>
             <?php else: ?>

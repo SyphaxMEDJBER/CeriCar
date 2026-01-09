@@ -12,6 +12,7 @@ use yii\helpers\Url;
 /** @var $embedded bool */
 ?>
 
+<!-- Formulaire proposer (page complète ou embarqué via AJAX) -->
 <div class="page-shell">
     <div class="section-card">
         <div class="section-header">
@@ -19,6 +20,7 @@ use yii\helpers\Url;
             <p class="section-subtitle">Renseigne les details de ton trajet.</p>
         </div>
 
+        <!-- Champs du formulaire pour le nouveau voyage -->
         <form method="post" action="<?= Url::to(['site/proposer']) ?>" class="proposer-form">
             <input type="hidden" name="_csrf" value="<?= Html::encode(Yii::$app->request->getCsrfToken()) ?>">
 

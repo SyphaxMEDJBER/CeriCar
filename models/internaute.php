@@ -1,85 +1,159 @@
 <?php
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use yii\db\ActiveRecord;
-use app\models\reservation;
-use app\models\voyage;
-use yii\web\IdentityInterface;
+use yii\db\ActiveRecord; // ActiveRecord pour l'accès BDD.
+use app\models\reservation; // Modèle Reservation (relation).
+use app\models\voyage; // Modèle Voyage (relation).
+use yii\web\IdentityInterface; // Interface d'identité Yii.
 
-class internaute extends ActiveRecord implements IdentityInterface{
+/**
+ * Modèle Internaute (identité utilisateur + relations).
+ */
+class internaute extends ActiveRecord implements IdentityInterface{ // Classe utilisateur principale.
 
-  //fonction obligatoire => le nom de la table
-    public static function tableName(){
-      return 'fredouil.internaute';
+  /**
+   * Associe ce ActiveRecord à la table SQL.
+   *
+   * @return string
+   */
+    public static function tableName(){ // Nom de table.
+      return 'fredouil.internaute'; // Table SQL cible.
     }
 
 
-    //['clé_étrangère_dans_reservation' => 'clé_locale_dans_internaute']
-    //un internaute peut avoir plusieurs réservations
-    public function getReservations(){
-      return $this->hasMany(reservation::class ,['voyageur'=>'id']);
+    /**
+     * Réservations effectuées par cet utilisateur.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReservations(){ // Relation 1->N vers reservations.
+      return $this->hasMany(reservation::class ,['voyageur'=>'id']); // FK reservation.voyageur => internaute.id
     }
 
 
-    //un conducteur peut proposer plusieurs voyages
-    public function getVoyages(){
-      return $this->hasMany(voyage::class,['conducteur'=>'id']);
+    /**
+     * Voyages proposés par cet utilisateur en tant que conducteur.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVoyages(){ // Relation 1->N vers voyages.
+      return $this->hasMany(voyage::class,['conducteur'=>'id']); // FK voyage.conducteur => internaute.id
     }
 
 
 
-  public static function getUserByIdentifiant($pseudo){
-    return self::findOne(['pseudo'=>$pseudo]);
+  /**
+   * Trouver un utilisateur par pseudo.
+   *
+   * @param string $pseudo
+   * @return static|null
+   */
+  public static function getUserByIdentifiant($pseudo){ // Recherche par pseudo.
+    return self::findOne(['pseudo'=>$pseudo]); // Premier résultat correspondant.
   }
 
 
-  public static function getUserById($id)
+  /**
+   * Trouver un utilisateur par id.
+   *
+   * @param int $id
+   * @return static|null
+   */
+  public static function getUserById($id) // Recherche par identifiant.
     {
-        return self::findOne($id);
+        return self::findOne($id); // Retourne l'utilisateur ou null.
 
     }
 
 
-    public static function getProfilById($id)
+    /**
+     * Alias pour récupérer le profil par id.
+     *
+     * @param int $id
+     * @return static|null
+     */
+    public static function getProfilById($id) // Alias sémantique.
     {
-         return self::findOne($id);
+         return self::findOne($id); // Même logique que getUserById.
 
     }
 
-    public static function findIdentity($id){
-        return self::findOne($id);
+    /**
+     * IdentityInterface : trouver l’identité par id.
+     *
+     * @param string|int $id
+     * @return static|null
+     */
+    public static function findIdentity($id){ // Requis par IdentityInterface.
+        return self::findOne($id); // Retourne l'identité.
     }
 
-    public static function findIdentityByAccessToken($token, $type = null){
-        return null;
+    /**
+     * IdentityInterface : les tokens d’accès ne sont pas utilisés ici.
+     *
+     * @param string $token
+     * @param mixed $type
+     * @return null
+     */
+    public static function findIdentityByAccessToken($token, $type = null){ // Non utilisé.
+        return null; // Pas d'auth par token.
     }
 
-    public function getId(){
-        return $this->id;
+    /**
+     * IdentityInterface : retourne la clé primaire.
+     *
+     * @return int|string|null
+     */
+    public function getId(){ // ID utilisateur.
+        return $this->id; // Valeur de la clé primaire.
     }
 
-    public function getAuthKey(){
-        return null;
+    /**
+     * IdentityInterface : auth key non utilisé.
+     *
+     * @return null
+     */
+    public function getAuthKey(){ // Non utilisé.
+        return null; // Pas de clé d'auth persistante.
     }
 
-    public function validateAuthKey($authKey){
-        return true;
+    /**
+     * IdentityInterface : validation d’auth key non utilisée.
+     *
+     * @param string $authKey
+     * @return bool
+     */
+    public function validateAuthKey($authKey){ // Non utilisé.
+        return true; // Toujours valide.
     }
 
-    public static function findByPseudo($pseudo){
-        return self::findOne(['pseudo' => $pseudo]);
+    /**
+     * Trouver par pseudo (utilisé par LoginForm).
+     *
+     * @param string $pseudo
+     * @return static|null
+     */
+    public static function findByPseudo($pseudo){ // Recherche par pseudo.
+        return self::findOne(['pseudo' => $pseudo]); // Retourne l'utilisateur.
     }
 
-    public function validatePassword($password){
-        $stored = (string)$this->pass;
-        $plain = (string)$password;
-        if ($stored === '') {
-            return false;
+    /**
+     * Valide un mot de passe en clair contre la valeur stockée.
+     * Supporte les valeurs héritées en md5.
+     *
+     * @param string $password
+     * @return bool
+     */
+    public function validatePassword($password){ // Vérifie le mot de passe.
+        $stored = trim((string)$this->pass); // Mot de passe stocké.
+        $plain = trim((string)$password); // Mot de passe saisi.
+        if ($stored === '') { // Aucun mot de passe enregistré.
+            return false; // Refus.
         }
-        if ($stored === $plain) {
-            return true;
+        if ($stored === $plain) { // Cas texte en clair (legacy).
+            return true; // Ok.
         }
-        return md5($plain) === $stored;
+        return md5($plain) === $stored; // Compare au hash md5.
     }
     
     

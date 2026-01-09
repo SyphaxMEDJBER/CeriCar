@@ -1,9 +1,21 @@
 <?php
+// Partiel : liste des réservations (directes + correspondances).
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var $user app\models\Internaute */
 /** @var bool $embedded */
+?>
+
+<?php
+$formatArrivee = function ($heureDepart, $distanceKm) {
+    $departMin = (int)$heureDepart * 60;
+    $dureeMin = (int)round((float)$distanceKm);
+    $arriveeMin = $departMin + $dureeMin;
+    $h = (int)floor($arriveeMin / 60) % 24;
+    $m = $arriveeMin % 60;
+    return sprintf('%02d:%02d', $h, $m);
+};
 ?>
 
 <?php $embedded = !empty($embedded); ?>
@@ -15,6 +27,7 @@ use yii\helpers\Url;
     </div>
 
     <?php
+        // Trie les réservations par heure de départ pour l'affichage.
         $reservations = $user->reservations ?: [];
         usort($reservations, function ($a, $b) {
             $aTime = $a->voyageObj->heuredepart ?? 0;
@@ -24,6 +37,7 @@ use yii\helpers\Url;
     ?>
 
     <?php
+        // Construit les segments et regroupe en direct vs correspondances.
         $direct = [];
         $corr = [];
         $segments = [];
@@ -172,6 +186,12 @@ use yii\helpers\Url;
                                             <div class="meta-row">
                                                 <span class="meta-label">Vehicule</span>
                                                 <span class="meta-value"><?= Html::encode($v->marqueVehicule->marquev ?? '') ?> – <?= Html::encode($v->typeVehicule->typev ?? '') ?></span>
+                                            </div>
+                                            <div class="meta-row">
+                                                <span class="meta-label">Arrivee</span>
+                                                <span class="meta-value">
+                                                    <?= Html::encode($formatArrivee($v->heuredepart ?? 0, $trajet->distance ?? 0)) ?>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

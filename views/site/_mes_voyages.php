@@ -1,6 +1,16 @@
 <?php
+// Partiel : liste des voyages proposés par l’utilisateur courant.
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+$formatArrivee = function ($heureDepart, $distanceKm) {
+    $departMin = (int)$heureDepart * 60;
+    $dureeMin = (int)round((float)$distanceKm);
+    $arriveeMin = $departMin + $dureeMin;
+    $h = (int)floor($arriveeMin / 60) % 24;
+    $m = $arriveeMin % 60;
+    return sprintf('%02d:%02d', $h, $m);
+};
 
 /** @var $user app\models\Internaute */
 /** @var bool $embedded */
@@ -36,6 +46,10 @@ use yii\helpers\Url;
                         <div class="info-row">
                             <span>Heure depart</span>
                             <strong><?= Html::encode($v->heuredepart) ?> h</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Arrivee</span>
+                            <strong><?= Html::encode($formatArrivee($v->heuredepart ?? 0, $trajet->distance ?? 0)) ?></strong>
                         </div>
                         <div class="info-row">
                             <span>Contraintes</span>

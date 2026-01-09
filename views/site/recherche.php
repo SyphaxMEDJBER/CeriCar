@@ -4,6 +4,7 @@ use yii\helpers\Url;
 $this->title = "Recherche de voyage";
 ?>
 
+<!-- Formulaire de recherche (soumis en AJAX dans recherche.js) -->
 <div class="container">
 <?= Html::beginForm(['site/recherche'], 'post', [
     'id' => 'formRecherche',
@@ -55,7 +56,7 @@ $this->title = "Recherche de voyage";
 <?= Html::endForm() ?>
 </div>
 
-<!-- CONTENEUR RÉSULTATS -->
+<!-- Conteneur des résultats (remplacé par la réponse AJAX) -->
 <div
     id="resultats"
     class="row g-4 mt-4"

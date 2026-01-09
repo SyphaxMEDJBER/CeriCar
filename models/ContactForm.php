@@ -1,68 +1,74 @@
 <?php
 
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use Yii;
-use yii\base\Model;
-use app\models\trajet;
-use app\models\voyage;
+use Yii; // Accès aux composants Yii.
+use yii\base\Model; // Base des formulaires Yii.
+use app\models\trajet; // Modèle Trajet (pas utilisé ici).
+use app\models\voyage; // Modèle Voyage (pas utilisé ici).
 
 /**
- * ContactForm is the model behind the contact form.
+ * ContactForm valide et envoie les messages de contact.
  */
-class ContactForm extends Model
+class ContactForm extends Model // Formulaire de contact.
 {
-    public $name;
-    public $email;
-    public $subject;
-    public $body;
-    public $verifyCode;
+    public $name; // Nom de l'expéditeur.
+    public $email; // Email de l'expéditeur.
+    public $subject; // Sujet du message.
+    public $body; // Contenu du message.
+    public $verifyCode; // Captcha.
 
 
     /**
-     * @return array the validation rules.
+     * Règles de validation du formulaire de contact.
+     *
+     * @return array
      */
-    public function rules()
+    public function rules() // Règles de validation.
     {
         return [
-            // name, email, subject and body are required
-            [['name', 'email', 'subject', 'body'], 'required'],
-            // email has to be a valid email address
-            ['email', 'email'],
-            // verifyCode needs to be entered correctly
-            ['verifyCode', 'captcha'],
+            // nom, email, sujet et message sont obligatoires
+            [['name', 'email', 'subject', 'body'], 'required'], // Champs requis.
+            // email doit être une adresse valide
+            ['email', 'email'], // Format email.
+            // verifyCode doit être saisi correctement
+            ['verifyCode', 'captcha'], // Validation captcha.
         ];
     }
 
     /**
-     * @return array customized attribute labels
+     * Libellés des champs (utilisés par ActiveForm).
+     *
+     * @return array
      */
-    public function attributeLabels()
+    public function attributeLabels() // Libellés des champs.
     {
         return [
-            'verifyCode' => 'Verification Code',
+            'verifyCode' => 'Verification Code', // Libellé du captcha.
         ];
     }
 
     /**
-     * Sends an email to the specified email address using the information collected by this model.
-     * @param string $email the target email address
-     * @return bool whether the model passes validation
+     * Envoie l’email de contact à l’adresse cible.
+     *
+     * @param string $email
+     * @return bool
      */
-    public function contact($email)
+    public function contact($email) // Envoie l'email.
     {
-        if ($this->validate()) {
+        if ($this->validate()) { // Valide avant envoi.
+            // Compose et envoie l’email avec les champs soumis.
             Yii::$app->mailer->compose()
-                ->setTo($email)
-                ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
-                ->setReplyTo([$this->email => $this->name])
-                ->setSubject($this->subject)
-                ->setTextBody($this->body)
-                ->send();
+                ->setTo($email) // Destinataire.
+                ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']]) // Expéditeur.
+                ->setReplyTo([$this->email => $this->name]) // Réponse vers l'utilisateur.
+                ->setSubject($this->subject) // Sujet.
+                ->setTextBody($this->body) // Corps du message.
+                ->send(); // Envoi.
 
-            return true;
+            return true; // Succès.
         }
-        return false;
+        return false; // Échec de validation.
     }
 
 

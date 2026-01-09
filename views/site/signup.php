@@ -9,7 +9,7 @@
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-
+// Formulaire d’inscription rendu par ActiveForm et géré par auth.js en AJAX.
 $this->title = Html::encode('Créer un compte');
 
 ?>

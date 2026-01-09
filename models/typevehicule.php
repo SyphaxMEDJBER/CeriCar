@@ -1,17 +1,28 @@
 <?php
-namespace app\models;
-use yii\db\ActiveRecord;
-use app\models\voyage;
+namespace app\models; // Espace de noms du modèle.
+use yii\db\ActiveRecord; // ActiveRecord pour l'accès BDD.
+use app\models\voyage; // Modèle Voyage (relation).
 
 
-class typevehicule extends ActiveRecord{
-    public static function tableName(){
-      return 'fredouil.typevehicule';
+/**
+ * Modèle TypeVehicule (référence de type de véhicule).
+ */
+class typevehicule extends ActiveRecord{ // Classe TypeVehicule.
+    /**
+     * @return string
+     */
+    public static function tableName(){ // Nom de table.
+      return 'fredouil.typevehicule'; // Table SQL cible.
     }
 
 
-    public function getVoyages(){
-      return $this->hasMany(voyage::class,['idtypev'=>'id']);
+    /**
+     * Voyages utilisant ce type de véhicule.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVoyages(){ // Relation vers voyages.
+      return $this->hasMany(voyage::class,['idtypev'=>'id']); // FK voyage.idtypev => typevehicule.id
 
 
   }

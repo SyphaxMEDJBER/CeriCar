@@ -4,6 +4,7 @@
 
 use yii\helpers\Html;
 
+// Page À propos (contenu statique).
 $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -7,6 +7,7 @@
 
 use yii\helpers\Html;
 
+// Page d'erreur affichée quand une exception survient.
 $this->title = $name;
 ?>
 <div class="site-error">

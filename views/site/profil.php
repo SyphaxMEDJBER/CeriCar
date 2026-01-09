@@ -3,6 +3,7 @@ use yii\helpers\Html;
 
 /** @var $user app\models\Internaute */
 
+// Page profil : résumé utilisateur + sections embarquées.
 $photo = trim((string)($user->photo ?? ''));
 $prenom = trim((string)($user->prenom ?? ''));
 $nom = trim((string)($user->nom ?? ''));
@@ -16,6 +17,7 @@ if ($initials === '') {
     <div class="profile-card shadow-lg">
 
         <!-- HEADER -->
+        <!-- En-tête avec avatar + identité -->
         <div class="profile-header d-flex align-items-center gap-4">
             <div class="profile-avatar" role="img" aria-label="Photo profil">
                 <?php if ($photo !== ''): ?>
@@ -25,6 +27,7 @@ if ($initials === '') {
                         onload="this.nextElementSibling.classList.add('d-none');"
                         onerror="this.style.display='none';this.nextElementSibling.classList.remove('d-none');"
                     >
+                    <!-- Fallback affiché uniquement si l'image ne charge pas -->
                     <div class="profile-avatar-fallback" aria-hidden="true">
                         <?= Html::encode($initials) ?>
                     </div>

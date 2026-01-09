@@ -1,30 +1,52 @@
 <?php
 
 
-namespace app\models;
+namespace app\models; // Espace de noms du modèle.
 
-use yii\db\ActiveRecord;
-use app\models\voyage;
-use app\models\internaute;
+use yii\db\ActiveRecord; // ActiveRecord pour l'accès BDD.
+use app\models\voyage; // Modèle Voyage (relation).
+use app\models\internaute; // Modèle Internaute (relation).
 
 
 
-class reservation extends ActiveRecord{
-  public static function tableName(){
-    return 'fredouil.reservation';
+/**
+ * Modèle Reservation (réservation d’un voyage).
+ */
+class reservation extends ActiveRecord{ // Classe Reservation.
+  /**
+   * @return string
+   */
+  public static function tableName(){ // Nom de table.
+    return 'fredouil.reservation'; // Table SQL cible.
   }
 
-  public function getVoyageObj(){
-    return $this->hasOne(voyage::class,['id'=>'voyage']);
+  /**
+   * Voyage lié à cette réservation.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+  public function getVoyageObj(){ // Relation vers voyage.
+    return $this->hasOne(voyage::class,['id'=>'voyage']); // FK reservation.voyage => voyage.id
   }
 
-  public function getReserveur(){
-    return $this-> hasOne(internaute::class,['id'=>'voyageur']);
+  /**
+   * Utilisateur qui a fait la réservation.
+   *
+   * @return \yii\db\ActiveQuery
+   */
+  public function getReserveur(){ // Relation vers utilisateur.
+    return $this-> hasOne(internaute::class,['id'=>'voyageur']); // FK reservation.voyageur => internaute.id
   }
 
 
-  public static function getReservationsByVoyageId($idVoyage){
-    return self::findAll(['voyage'=>$idVoyage]);
+  /**
+   * Trouver les réservations pour un voyage.
+   *
+   * @param int $idVoyage
+   * @return static[]
+   */
+  public static function getReservationsByVoyageId($idVoyage){ // Réservations par voyage.
+    return self::findAll(['voyage'=>$idVoyage]); // Toutes les réservations liées.
   }
 
 

@@ -61,12 +61,13 @@ class SiteController extends Controller
         }
 
         /**
-         * Displays homepage.
+         * Page d’accueil avec les données de base pour la recherche (listes départ/arrivée).
          *
-         * @return string
+         * @return string HTML rendu.
          */
         public function actionIndex()
         {
+                // Prépare les données utilisées par la recherche sur la page d’accueil.
                 $vdep= trajet::getDepart();
                 $varr= trajet::getArrivee();
 
@@ -78,9 +79,12 @@ class SiteController extends Controller
         }
 
         /**
-         * Login action.
+         * Action de connexion.
          *
-         * @return Response|string
+         * - AJAX : retourne du JSON pour auth.js
+         * - Non-AJAX : affiche le formulaire de connexion ou redirige en cas de succès
+         *
+         * @return Response|string JSON ou HTML rendu.
          */
 
         public function actionLogin()
@@ -90,6 +94,7 @@ class SiteController extends Controller
                 return $this->goHome();
             }
 
+            // Mémorise l’URL de retour si fournie (ex: après réservation).
             $returnUrl = Yii::$app->request->get('returnUrl');
             if (!empty($returnUrl)) {
                 Yii::$app->user->setReturnUrl($returnUrl);
@@ -100,6 +105,7 @@ class SiteController extends Controller
 
             // Si le formulaire est envoyé et les identifiants sont corrects
             if ($model->load(Yii::$app->request->post())) {
+                // Mode AJAX : on renvoie un JSON pour auth.js.
                 if (Yii::$app->request->isAjax) {
                     if ($model->login()) {
                         $redirect = Yii::$app->user->getReturnUrl(['site/index']);
@@ -117,6 +123,7 @@ class SiteController extends Controller
                     ]);
                 }
 
+                // Mode classique : on redirige vers la page précédente.
                 if ($model->login()) {
                     // Connexion réussie → accueil
                     return $this->goBack();
@@ -140,9 +147,9 @@ class SiteController extends Controller
 
 
         /**
-         * Logout action.
+         * Action de déconnexion.
          *
-         * @return Response
+         * @return Response Redirection vers l’accueil après déconnexion.
          */
         public function actionLogout()
         {
@@ -163,9 +170,9 @@ class SiteController extends Controller
 
 
         /**
-         * Displays contact page.
+         * Page contact : valide le formulaire et envoie l’email.
          *
-         * @return Response|string
+         * @return Response|string HTML rendu ou rafraîchissement en cas de succès.
          */
         public function actionContact()
         {
@@ -181,7 +188,7 @@ class SiteController extends Controller
         }
 
         /**
-         * Displays about page.
+         * Page À propos statique.
          *
          * @return string
          */
@@ -193,6 +200,12 @@ class SiteController extends Controller
 
 
 
+        /**
+         * Page de test utilisée pour des vérifications manuelles en développement.
+         *
+         * @param string|null $pseudo Pseudo optionnel.
+         * @return string HTML rendu.
+         */
         public function actionTest($pseudo =null){
             $pseudo="Loup";
 
@@ -202,11 +215,20 @@ class SiteController extends Controller
             return $this->render('test',['user'=>$user]);   // charge la vue test.php, injecte la variable $user et construit la page html 
         }
 
+        /**
+         * Action d’inscription.
+         *
+         * - AJAX : retourne du JSON pour auth.js
+         * - Non-AJAX : affiche le formulaire d’inscription ou redirige vers la connexion en cas de succès
+         *
+         * @return Response|string JSON ou HTML rendu.
+         */
         public function actionSignup()
         {
             $model = new \app\models\SignupForm();
 
             if (Yii::$app->request->isPost) {
+                // Mode AJAX : le JS gère l’affichage des erreurs/succès.
                 if (Yii::$app->request->isAjax) {
                     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                         $user = $model->signup();
@@ -231,6 +253,7 @@ class SiteController extends Controller
                     ]);
                 }
 
+                // Mode classique : création puis redirection vers la connexion.
                 if ($model->signup()) {
                     Yii::$app->session->setFlash('success', 'Compte créé avec succès.');
                     return $this->redirect(['site/login']);
@@ -245,6 +268,14 @@ class SiteController extends Controller
 
                     
     
+        /**
+         * Page de recherche avec résultats.
+         *
+         * - AJAX : retourne du JSON (HTML partiel + notif)
+         * - Non-AJAX : affiche la page complète
+         *
+         * @return string|Response JSON ou HTML rendu.
+         */
         public function actionRecherche()
         {
 
@@ -263,11 +294,13 @@ class SiteController extends Controller
             $directCount = 0;
             $corrCount = 0;
 
+            // On accepte l’entrée en POST (formulaire) ou en GET (navigation interne).
             $departInput = $request->post('depart', $request->get('depart'));
             $arriveeInput = $request->post('arrivee', $request->get('arrivee'));
             $nbInput = $request->post('voyageurs', $request->get('voyageurs'));
             $coresInput = $request->post('correspondance', $request->get('correspondance', null));
 
+            // Calcule les résultats uniquement quand des entrées sont présentes.
             if ($request->isPost || ($request->isGet && ($departInput !== null || $arriveeInput !== null || $nbInput !== null || $coresInput !== null))) {//on ne calcule la recherche que si on  a soumis le formulaire
                 
                 $depart = $departInput;//recupere la ville de dep envoyee par le form
@@ -275,6 +308,7 @@ class SiteController extends Controller
                 $nb = (int)$nbInput;//nbr de voyageurs
                 $cores = !empty($coresInput);//si on veut des correspondances
                 
+                // Recherche du trajet exact (départ/arrivée).
                 $trajet = trajet::getTrajet($depart, $arrivee);//on ramene l'objet trajet correspondant 
                 
                 if ($trajet) {//si le trajet existe 
@@ -282,12 +316,14 @@ class SiteController extends Controller
                     
                     
                     foreach ($voyages as $v) {//on parcourt chaque voyage correspondant au trajet 
+                        // Filtre si pas assez de places.
                         if($nb<=$v->nbplacedispo){
                             
                             
                             $placesRestantes = $v->getPlacesRestantes();//
                             $complet = ($placesRestantes < $nb);//true si complet
                             
+                            // Prix total pour tous les voyageurs.
                             $prixTotal = $trajet->distance * $v->tarif * $nb;//ptot
                             
                             $resultats[] = [
@@ -299,6 +335,7 @@ class SiteController extends Controller
                                 'complet'     => $complet,
                                 'prix'        => $prixTotal,
                                 'heure'       => $v->heuredepart,
+                                'distance'    => $trajet->distance,
                                 'marque'      => $v->marqueVehicule->marquev,
                                     'typev'        => $v->typeVehicule->typev,
                                     'bagages'     => $v->nbbagage,
@@ -315,7 +352,9 @@ class SiteController extends Controller
 
 
                     
+                // Construit une carte de correspondance à partir de plusieurs segments.
                 $buildCorrespondance = function (array $segments) use ($nb) {
+                    // Agrège les infos de chaque segment pour une carte globale.
                     $voyageIds = [];
                     $conducteurs = [];
                     $heures = [];
@@ -339,6 +378,7 @@ class SiteController extends Controller
                         $marques[] = $v->marqueVehicule->marquev;
                         $types[] = $v->typeVehicule->typev;
                         $places = $v->getPlacesRestantes();
+                        // On conserve le minimum des places/bagages pour refléter la contrainte la plus forte.
                         $placesMin = $placesMin === null ? $places : min($placesMin, $places);
                         $bagagesMin = $bagagesMin === null ? $v->nbbagage : min($bagagesMin, $v->nbbagage);
                         if (!empty($v->contraintes)) {
@@ -352,6 +392,7 @@ class SiteController extends Controller
                         'voyage_ids' => $voyageIds,
                         'conducteur' => implode(' / ', $conducteurs),
                         'places' => $placesMin ?? 0,
+                        // Si on n’a pas de places, on considère le trajet complet.
                         'complet' => $placesMin !== null ? $placesMin < $nb : true,
                         'prix' => $prixTotal * $nb,
                         'heure' => implode(' → ', $heures),
@@ -360,6 +401,16 @@ class SiteController extends Controller
                         'bagages' => $bagagesMin ?? 0,
                         'contraintes' => trim(implode(' ', $contraintes))
                     ];
+                };
+
+                // Calcule les minutes de départ/arrivée pour comparer les correspondances.
+                $getDepartMinutes = function ($voyage) {
+                    return (int)$voyage->heuredepart * 60; // Heure départ (h) -> minutes.
+                };
+                $getArriveeMinutes = function ($voyage, $trajet) {
+                    $departMin = (int)$voyage->heuredepart * 60; // Heure départ (h) -> minutes.
+                    $dureeMin = (int)round($trajet->distance); // 1 km = 1 minute.
+                    return $departMin + $dureeMin; // Heure d'arrivée en minutes.
                 };
 
 
@@ -371,6 +422,7 @@ class SiteController extends Controller
                     foreach (trajet::getTrajetsDepuis($depart) as $t1) {
 
                         $villeB = $t1->arrivee;
+                        // Évite les boucles et le trajet direct déjà traité.
                         if ($villeB === $arrivee || $villeB === $depart) {
                             continue;
                         }
@@ -380,10 +432,11 @@ class SiteController extends Controller
                             foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
                                 foreach (voyage::getVoyagesByTrajetId($trajetBC->id) as $v2) {
 
+                                    // Vérifie places et cohérence temporelle entre segments.
                                     if (
                                         $nb <= $v1->getPlacesRestantes() &&
                                         $nb <= $v2->getPlacesRestantes() &&
-                                        $v1->heuredepart < $v2->heuredepart
+                                        $getArriveeMinutes($v1, $t1) < $getDepartMinutes($v2)
                                     ) {
                                         $resultats[] = $buildCorrespondance([
                                             ['trajet' => $t1, 'voyage' => $v1],
@@ -400,6 +453,7 @@ class SiteController extends Controller
                         ============================== */
                         foreach (trajet::getTrajetsDepuis($villeB) as $t2) {
                             $villeC = $t2->arrivee;
+                            // Évite les cycles et les doublons.
                             if ($villeC === $arrivee || $villeC === $depart || $villeC === $villeB) {
                                 continue;
                             }
@@ -411,18 +465,20 @@ class SiteController extends Controller
 
                             foreach (voyage::getVoyagesByTrajetId($t1->id) as $v1) {
                                 foreach (voyage::getVoyagesByTrajetId($t2->id) as $v2) {
+                                    // Respecte l’ordre des segments et les places.
                                     if (
                                         $nb > $v1->getPlacesRestantes() ||
                                         $nb > $v2->getPlacesRestantes() ||
-                                        $v1->heuredepart >= $v2->heuredepart
+                                        $getArriveeMinutes($v1, $t1) >= $getDepartMinutes($v2)
                                     ) {
                                         continue;
                                     }
 
                                     foreach (voyage::getVoyagesByTrajetId($trajetCD->id) as $v3) {
+                                        // Le dernier segment doit partir après le précédent.
                                         if (
                                             $nb <= $v3->getPlacesRestantes() &&
-                                            $v2->heuredepart < $v3->heuredepart
+                                            $getArriveeMinutes($v2, $t2) < $getDepartMinutes($v3)
                                         ) {
                                             $resultats[] = $buildCorrespondance([
                                                 ['trajet' => $t1, 'voyage' => $v1],
@@ -438,6 +494,7 @@ class SiteController extends Controller
                     }
                 }
 
+                    // Construit la notification globale pour l’interface.
                     if ($directCount === 0 && $corrCount === 0) {
                         if ($trajet) {
                             $notif = ['type'=>'warning','message'=>'Aucun voyage disponible pour ce trajet.'];
@@ -445,6 +502,7 @@ class SiteController extends Controller
                             $notif = ['type'=>'danger','message'=>'Trajet introuvable.'];
                         }
                     } else {
+                        // Compose un résumé du nombre de trajets trouvés.
                         $parts = [];
                         if ($directCount > 0) {
                             $parts[] = $directCount.' direct(s)';
@@ -459,6 +517,7 @@ class SiteController extends Controller
 
                     // retour de serveur
                     if ($request->isAjax) {//si lappel vient dajax
+                        // Réponse JSON utilisée par recherche.js.
                         return $this->asJson([   //reponse json pas de layout
                             'html' => $this->renderPartial('_resultats', [//html partiel : que les cartes resultats
                                 'resultats' => $resultats,//donnees pour la vue partielle
@@ -469,6 +528,7 @@ class SiteController extends Controller
                         ]);
                     }
                     
+                    // Mode classique : rendu complet de la page.
                     return $this->render('recherche', compact('vdep','varr','resultats','depart','arrivee','nb'));//appel normal sans ajax , variables injectées dans recherche.php
                 
             }
@@ -478,12 +538,18 @@ class SiteController extends Controller
         
     }
 
+        /**
+         * AJAX : détails des cartes de correspondance.
+         *
+         * @return string HTML partiel rendu.
+         */
         public function actionCorrespondanceDetails()
         {
             $request = Yii::$app->request;
             $idsParam = $request->get('ids', '');
             $nb = (int)$request->get('nb', 1);
 
+            // Convertit la liste d’IDs en tableau d’entiers.
             $ids = array_values(array_filter(array_map('intval', explode(',', $idsParam))));
             $segments = [];
             $total = 0.0;
@@ -497,6 +563,7 @@ class SiteController extends Controller
                 $trajet = $voyage->trajetObj;
                 $prix = null;
                 if ($trajet) {
+                    // Prix par segment = distance * tarif * nb voyageurs.
                     $prix = $trajet->distance * $voyage->tarif * max($nb, 1);
                     $total += $prix;
                 }
@@ -505,6 +572,7 @@ class SiteController extends Controller
                     'depart' => $trajet ? $trajet->depart : null,
                     'arrivee' => $trajet ? $trajet->arrivee : null,
                     'heure' => $voyage->heuredepart,
+                    'distance' => $trajet ? $trajet->distance : null,
                     'marque' => $voyage->marqueVehicule ? $voyage->marqueVehicule->marquev : null,
                     'typev' => $voyage->typeVehicule ? $voyage->typeVehicule->typev : null,
                     'bagages' => $voyage->nbbagage,
@@ -523,6 +591,11 @@ class SiteController extends Controller
 
 
 
+        /**
+         * Page profil pour les utilisateurs connectés.
+         *
+         * @return Response|string Redirige vers la connexion si invité, sinon affiche le profil.
+         */
         public function actionProfil()
         {
             if (Yii::$app->user->isGuest) {
@@ -536,6 +609,14 @@ class SiteController extends Controller
             ]);
         }
 
+        /**
+         * Proposer un trajet (conducteurs avec permis uniquement).
+         *
+         * - GET : affiche le formulaire (optionnellement embed=1 pour le partiel)
+         * - POST : valide et enregistre, retourne du JSON pour l’AJAX
+         *
+         * @return Response|string JSON ou HTML rendu.
+         */
         public function actionProposer()
         {
             if (Yii::$app->user->isGuest) {
@@ -550,6 +631,7 @@ class SiteController extends Controller
             $request = Yii::$app->request;
             $notif = null;
             $errors = [];
+            // embed=1 est utilisé quand ce formulaire est chargé dans la page profil.
             $embedded = (bool)$request->get('embed', false);
             $form = [
                 'depart' => '',
@@ -564,6 +646,7 @@ class SiteController extends Controller
             ];
 
             if ($request->isPost) {
+                // Récupération et normalisation des champs.
                 $form['depart'] = trim($request->post('depart', ''));
                 $form['arrivee'] = trim($request->post('arrivee', ''));
                 $form['idtypev'] = (int)$request->post('idtypev', 0);
@@ -601,6 +684,7 @@ class SiteController extends Controller
 
                 $trajet = null;
                 if (empty($errors)) {
+                    // On vérifie que le trajet existe en base.
                     $trajet = trajet::getTrajet($form['depart'], $form['arrivee']);
                     if (!$trajet) {
                         $errors[] = 'Trajet introuvable.';
@@ -608,8 +692,10 @@ class SiteController extends Controller
                 }
 
                 if (!empty($errors)) {
+                    // Erreurs de validation : on affiche une notif d’échec.
                     $notif = ['type' => 'danger', 'message' => 'Veuillez corriger les erreurs.'];
                 } else {
+                    // Construction de l’entité voyage.
                     $voyage = new voyage();
                     $voyage->conducteur = $user->id;
                     $voyage->trajet = $trajet->id;
@@ -623,6 +709,7 @@ class SiteController extends Controller
 
                     if ($voyage->save()) {
                         $notif = ['type' => 'success', 'message' => 'Voyage propose avec succes.'];
+                        // Reset des champs après succès.
                         $form = [
                             'depart' => '',
                             'arrivee' => '',
@@ -641,6 +728,7 @@ class SiteController extends Controller
 
                 if ($request->isAjax) {
                     if (!empty($errors)) {
+                        // Format JSON attendu par profil.js.
                         return $this->asJson([
                             'status' => 'error',
                             'message' => $notif['message'] ?? 'Erreur.',
@@ -657,6 +745,7 @@ class SiteController extends Controller
             }
 
             if ($embedded) {
+                // Version partielle pour affichage dans le profil.
                 return $this->renderPartial('proposer', [
                     'user' => $user,
                     'vdep' => trajet::getDepart(),
@@ -670,6 +759,7 @@ class SiteController extends Controller
                 ]);
             }
 
+            // Version page complète.
             return $this->render('proposer', [
                 'user' => $user,
                 'vdep' => trajet::getDepart(),
@@ -683,6 +773,11 @@ class SiteController extends Controller
             ]);
         }
 
+        /**
+         * Liste des réservations.
+         *
+         * @return Response|string Partiel (embed) ou page complète.
+         */
         public function actionReservations()
         {
             if (Yii::$app->user->isGuest) {
@@ -704,6 +799,11 @@ class SiteController extends Controller
             ]);
         }
 
+        /**
+         * Liste des voyages pour l’utilisateur courant.
+         *
+         * @return Response|string Partiel (embed) ou page complète.
+         */
         public function actionMesVoyages()
         {
             if (Yii::$app->user->isGuest) {
@@ -757,9 +857,14 @@ class SiteController extends Controller
 
 
 
-        //part 5
+        //partie 5
 
 
+    /**
+     * Réserver un ou plusieurs voyages.
+     *
+     * @return Response Statut JSON pour l’AJAX.
+     */
     public function actionReserver()
     {
         $request = Yii::$app->request;
@@ -791,6 +896,7 @@ class SiteController extends Controller
             ]);
         }
 
+        // Transaction pour garantir l’atomicité des réservations multiples.
         $userId = Yii::$app->user->id;
         $transaction = Yii::$app->db->beginTransaction();
 
@@ -798,6 +904,7 @@ class SiteController extends Controller
 
             foreach ($ids as $voyageId) {
 
+                // Vérifie que chaque voyage existe et a assez de places.
                 $voyage = voyage::findOne($voyageId);
                 if (!$voyage) {
                     throw new \Exception("Voyage introuvable.");
@@ -819,8 +926,10 @@ class SiteController extends Controller
 
             }
 
+            // Tout est OK → commit.
             $transaction->commit();
 
+            // Recalcule les places restantes après réservation.
             $placesRestantes = [];
             foreach ($ids as $voyageId) {
                 $voyage = voyage::findOne($voyageId);
@@ -838,6 +947,7 @@ class SiteController extends Controller
             ]);
 
         } catch (\Throwable $e) {
+            // En cas d’erreur, on annule toutes les réservations.
             $transaction->rollBack();
 
             return $this->asJson([
