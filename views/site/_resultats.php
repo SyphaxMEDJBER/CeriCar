@@ -14,6 +14,7 @@ $correspondances = array_filter($resultats, function ($r) {
 ?>
 
 <?php if (!empty($directs)): ?>
+<!-- Section voyages directs -->
 <div class="col-12">
     <h3 class="result-section-title">Voyages directs</h3>
 </div>
@@ -95,12 +96,15 @@ $correspondances = array_filter($resultats, function ($r) {
                     </div>
                 </div>
 
+                <!-- Toggle des détails de correspondance -->
                 <div class="result-toggle">Voir les details</div>
 
+                <!-- Zone AJAX pour les détails -->
                 <div class="correspondance-inline d-none"></div>
             <?php endif; ?>
 
             <?php if ($r['type'] === 'direct' && !empty($r['contraintes'])): ?>
+                <!-- Contraintes conducteur -->
                 <div class="contrainte-line mt-2">
                     <?= Html::encode($r['contraintes']) ?>
                 </div>
@@ -129,6 +133,7 @@ $correspondances = array_filter($resultats, function ($r) {
 <?php endif; ?>
 
 <?php if (!empty($correspondances)): ?>
+<!-- Section correspondances -->
 <div class="col-12">
     <h3 class="result-section-title">Voyages avec correspondance</h3>
 </div>

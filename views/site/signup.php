@@ -22,7 +22,9 @@ $this->title = Html::encode('Créer un compte');
     <div class="login-card">
       <h1 class="login-title"><?= Html::encode($this->title)?></h1>
       <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
+      <!-- Zone de notification (AJAX) -->
       <div class="alert auth-notif d-none"></div>
+      <!-- Début du formulaire -->
       <?php $form=ActiveForm::begin([ //début du formulaire
         'id'=>'signup-form', // identifiant du formulaire   
         'fieldConfig'=> [
@@ -32,10 +34,12 @@ $this->title = Html::encode('Créer un compte');
           ],
         ]); 
       ?>
+      <!-- Identité -->
       <?= $form->field($model, 'nom')// champ nom
           ->textInput(['placeholder' => "Nom"]) ?> 
       <?= $form->field($model, 'prenom')
           ->textInput(['placeholder' => "Prénom"]) ?>
+      <!-- Profil -->
       <?= $form->field($model, 'pseudo')
           ->textInput(['placeholder' => "Pseudo"]) ?>
       <?= $form->field($model, 'mail')
@@ -45,6 +49,7 @@ $this->title = Html::encode('Créer un compte');
 
 
 
+      <!-- Photo + mot de passe -->
       <?= $form->field($model, 'photo')
             ->textInput(['placeholder' => "URL de la photo"]) ?>
 
@@ -52,6 +57,7 @@ $this->title = Html::encode('Créer un compte');
           ->passwordInput(['placeholder' => "Password"]) ?>
 
       <div class="form-group mt-3">
+                <!-- Bouton d'inscription -->
                 <?= Html::submitButton('Créer un compte', [//bouton de soumission
                     'class' => 'btn btn-login',
                     'name' => 'login-button'

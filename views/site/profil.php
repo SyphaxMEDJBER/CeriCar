@@ -4,6 +4,7 @@ use yii\helpers\Html;
 /** @var $user app\models\Internaute */
 
 // Page profil : résumé utilisateur + sections embarquées.
+// Prépare l'avatar et les initiales de secours.
 $photo = trim((string)($user->photo ?? ''));
 $prenom = trim((string)($user->prenom ?? ''));
 $nom = trim((string)($user->nom ?? ''));
@@ -53,6 +54,7 @@ if ($initials === '') {
 
         <hr>
 
+        <!-- Actions -->
         <div class="profile-actions d-grid gap-3">
             <a href="<?= \yii\helpers\Url::to(['site/reservations']) ?>" class="btn btn-primary btn-lg js-profile-load">Mes réservations</a>
             <a href="<?= \yii\helpers\Url::to(['site/mes-voyages']) ?>" class="btn btn-accent btn-lg js-profile-load">Mes voyages</a>
@@ -63,6 +65,7 @@ if ($initials === '') {
             <?php endif; ?>
         </div>
 
+        <!-- Contenu chargé en AJAX -->
         <div id="profile-content" class="profile-embed mt-4"></div>
 
     </div>

@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+// Calcule l'heure d'arrivée estimée.
 $formatArrivee = function ($heureDepart, $distanceKm) {
     $departMin = (int)$heureDepart * 60;
     $dureeMin = (int)round((float)$distanceKm);
@@ -25,8 +26,10 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
     </div>
 
     <?php if (!$user->permis): ?>
+        <!-- Permis manquant -->
         <div class="empty-state">Permis requis pour proposer et afficher vos voyages.</div>
     <?php elseif (!empty($user->voyages)): ?>
+        <!-- Liste des voyages -->
         <div class="row g-3">
             <?php foreach ($user->voyages as $v): ?>
                 <?php $trajet = $v->trajetObj; ?>
@@ -64,10 +67,12 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
             <?php endforeach; ?>
         </div>
     <?php else: ?>
+        <!-- Aucun voyage -->
         <div class="empty-state">Aucun voyage propose pour le moment.</div>
     <?php endif; ?>
 
     <?php if (!$embedded): ?>
+        <!-- Retour profil si page complète -->
         <div class="mt-4">
             <a href="<?= Url::to(['site/profil']) ?>" class="btn btn-outline-light">Retour profil</a>
         </div>

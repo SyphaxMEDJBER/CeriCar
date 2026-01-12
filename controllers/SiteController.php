@@ -200,6 +200,16 @@ class SiteController extends Controller
             return $this->render('about');
         }
 
+        /**
+         * Page FAQ professionnelle.
+         *
+         * @return string
+         */
+        public function actionFaq()
+        {
+            return $this->render('faq');
+        }
+
 
 
 

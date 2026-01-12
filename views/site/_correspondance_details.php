@@ -4,6 +4,7 @@ use yii\helpers\Html;
 ?>
 
 <?php if (empty($segments)): ?>
+    <!-- Aucun segment -->
     <div class="details-empty">Aucun detail disponible.</div>
 <?php else: ?>
     <?php
@@ -19,9 +20,11 @@ use yii\helpers\Html;
                 <span class="route-sep">→</span>
                 <span><?= Html::encode($endCity) ?></span>
             </div>
+            <!-- Prix total -->
             <div class="details-price"><?= number_format($total, 2) ?> €</div>
         </div>
 
+        <!-- Cartes des segments -->
         <div class="row g-3 equal-height">
             <?php foreach ($segments as $segment): ?>
                 <div class="col-md-6">
@@ -39,11 +42,13 @@ use yii\helpers\Html;
                                 </div>
                             </div>
 
+                            <!-- Villes départ/arrivée -->
                             <div class="bb-cities">
                                 <span><?= Html::encode($segment['depart']) ?></span>
                                 <span><?= Html::encode($segment['arrivee']) ?></span>
                             </div>
 
+                            <!-- Métadonnées -->
                             <div class="result-meta">
                                 <div class="meta-row">
                                     <span class="meta-label">Vehicule</span>
@@ -66,6 +71,7 @@ use yii\helpers\Html;
                             </div>
 
                             <?php if (!empty($segment['contraintes'])): ?>
+                                <!-- Contraintes -->
                                 <div class="contrainte-line mt-2">
                                     <?= Html::encode($segment['contraintes']) ?>
                                 </div>
@@ -73,6 +79,7 @@ use yii\helpers\Html;
                         </div>
 
                         <div class="card-footer mt-auto d-flex justify-content-between align-items-center px-3 py-2 result-footer">
+                            <!-- Prix du segment -->
                             <div class="result-price">
                                 <?= number_format($segment['prix'], 2) ?> €
                             </div>

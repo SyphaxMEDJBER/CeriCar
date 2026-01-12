@@ -1,6 +1,7 @@
 <h1>infos internaute</h1>
 
 <?php if($user): ?>
+  <!-- Informations de base utilisateur -->
   <p>ID: <?=$user->id ?></p>
   <p>Nom : <?= $user->prenom ?></p>
   <p>Prenom: <?= $user->nom ?></p>
@@ -11,6 +12,7 @@
   <h1>voyages proposés: </h1>
   <?php if($user->permis && count($user->voyages)>0):?> 
     <?php foreach($user->voyages as $v): ?>
+      <!-- Détails d'un voyage proposé -->
       <p><h3>id voyage: <?=$v->id ?></h3></p>
       <p>tarif  <?=$v->tarif ?>$</p>
       <p>tarif totale  <?=$v->tarif * $v->trajetObj->distance ?>$</p>
@@ -38,10 +40,12 @@
 
 
   <?php if (count($user->reservations) > 0): ?>
+    <!-- Liste des réservations -->
     <?php foreach ($user->reservations as $r): ?>
       <?php $v = $r->voyageObj; ?>
 
       <?php if ($v && $v->trajetObj): ?>
+        <!-- Détails réservation -->
         <h3>Réservation n° <?= $r->id ?> (<?= $r->nbplaceresa ?> place(s))</h3>
 
         <p>Trajet :
@@ -68,6 +72,7 @@
 
     <?php endforeach; ?>
   <?php else: ?>
+    <!-- Aucune réservation -->
     <p>Aucune réservation pour cet internaute.</p>
   <?php endif; ?>
 
@@ -80,9 +85,9 @@
 
   
 <?php else: ?>
+  <!-- Aucun utilisateur trouvé -->
   <p>aucun internaute trouvé .</p>
 <?php endif; ?>
-
 
 
 

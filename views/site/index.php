@@ -5,6 +5,7 @@ use yii\helpers\Url;
 $this->title = "CeriCar – Trouvez votre voyage";
 
 // Blocs marketing de la page d’accueil (hero + trajets populaires).
+// Affiche les erreurs PHP en mode debug.
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -36,6 +37,7 @@ error_reporting(E_ALL);
 
 <div class="popular-container">
 
+    <!-- Carte trajet populaire #1 -->
     <div class="popular-card">
         <img src=<?= Url::to('@web/images/paris.jpg') ?> alt="Paris">
         <div class="card-info">
@@ -44,6 +46,7 @@ error_reporting(E_ALL);
         </div>
     </div>
 
+    <!-- Carte trajet populaire #2 -->
     <div class="popular-card">
         <img src=<?= Url::to('@web/images/avignon.jpg') ?> alt="Avignon">
         <div class="card-info">
@@ -52,6 +55,7 @@ error_reporting(E_ALL);
         </div>
     </div>
 
+    <!-- Carte trajet populaire #3 -->
     <div class="popular-card">
         <img src=<?= Url::to('@web/images/toulouse.jpg') ?> alt="Toulouse">
         <div class="card-info">

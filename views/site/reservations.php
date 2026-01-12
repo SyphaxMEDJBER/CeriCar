@@ -4,6 +4,7 @@
 ?>
 
 <div class="page-shell">
+    <!-- Inclusion du partiel en mode page complète -->
     <?= $this->render('_reservations', [
         'user' => $user,
         'embedded' => false,

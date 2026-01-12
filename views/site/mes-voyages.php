@@ -4,6 +4,7 @@
 ?>
 
 <div class="page-shell">
+    <!-- Inclusion du partiel en mode page complète -->
     <?= $this->render('_mes_voyages', [
         'user' => $user,
         'embedded' => false,

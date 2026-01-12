@@ -5,6 +5,7 @@ use yii\web\JqueryAsset;
 use app\assets\AppAsset;
 
 // Layout principal : navbar + notification globale + contenu + footer.
+// Enregistre les assets CSS/JS globaux.
 AppAsset::register($this);
 JqueryAsset::register($this);
 $this->registerJsFile('@web/js/recherche.js', ['depends' => [JqueryAsset::class]]);
@@ -19,10 +20,13 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Meta CSRF pour les formulaires -->
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?> – CeriCar</title>
+    <!-- Head Yii (assets injectés) -->
     <?php $this->head() ?>
 
+    <!-- CSS externes -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= Url::to('@web/css/dark.css') ?>">
 </head>
@@ -38,6 +42,7 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
         <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Liens principaux -->
     <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto">
 
@@ -51,6 +56,7 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
 
             <?php if (Yii::$app->user->isGuest): ?>
 
+                <!-- Liens visiteurs -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?= Url::to(['site/login']) ?>" data-ajax="false">Connexion</a>
                 </li>
@@ -60,8 +66,13 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
 
             <?php else: ?>
 
+                <!-- Liens utilisateur connecté -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?= Url::to(['site/profil']) ?>">Mon compte</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= Url::to(['site/faq']) ?>">FAQ</a>
                 </li>
 
                 <li class="nav-item">
@@ -96,6 +107,7 @@ $this->registerJsFile('@web/js/navigation.js', ['depends' => [JqueryAsset::class
     <p>CeriCar © <?= date('Y') ?> — Mobilité nouvelle génération</p>
 </footer>
 
+<!-- JS externes -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <?php $this->endBody() ?>

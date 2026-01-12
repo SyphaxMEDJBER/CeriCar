@@ -22,9 +22,11 @@ use yii\helpers\Url;
 
         <!-- Champs du formulaire pour le nouveau voyage -->
         <form method="post" action="<?= Url::to(['site/proposer']) ?>" class="proposer-form">
+            <!-- Jeton CSRF -->
             <input type="hidden" name="_csrf" value="<?= Html::encode(Yii::$app->request->getCsrfToken()) ?>">
 
             <div class="row g-3">
+                <!-- Depart / arrivee -->
                 <div class="col-md-6">
                     <label class="form-label">Depart</label>
                     <input type="text" name="depart" list="villesDepart"
@@ -51,6 +53,7 @@ use yii\helpers\Url;
                     </datalist>
                 </div>
 
+                <!-- Type et marque du vehicule -->
                 <div class="col-md-6">
                     <label class="form-label">Type vehicule</label>
                     <select name="idtypev" class="form-select">
@@ -75,6 +78,7 @@ use yii\helpers\Url;
                     </select>
                 </div>
 
+                <!-- Informations de prix et capacite -->
                 <div class="col-md-4">
                     <label class="form-label">Tarif (EUR / km)</label>
                     <input type="number" name="tarif" class="form-control" step="0.01" min="0"
@@ -93,6 +97,7 @@ use yii\helpers\Url;
                            value="<?= Html::encode($form['nbbagage']) ?>">
                 </div>
 
+                <!-- Heure de depart -->
                 <div class="col-md-4">
                     <label class="form-label">Heure depart</label>
                     <input type="number" name="heuredepart" class="form-control" min="0" max="23"
@@ -100,6 +105,7 @@ use yii\helpers\Url;
                            placeholder="Ex: 14">
                 </div>
 
+                <!-- Contraintes du conducteur -->
                 <div class="col-12">
                     <label class="form-label">Contraintes</label>
                     <textarea name="contraintes" class="form-control" rows="3"
@@ -108,8 +114,10 @@ use yii\helpers\Url;
             </div>
 
             <div class="mt-4 d-flex gap-2">
+                <!-- Actions du formulaire -->
                 <button type="submit" class="btn btn-primary">Proposer</button>
                 <?php if (empty($embedded)): ?>
+                    <!-- Retour au profil (page complète) -->
                     <a href="<?= Url::to(['site/profil']) ?>" class="btn btn-outline-light">Retour profil</a>
                 <?php endif; ?>
             </div>
@@ -118,6 +126,7 @@ use yii\helpers\Url;
 </div>
 
 <?php if (!empty($notif) || !empty($errors)): ?>
+<!-- Affiche les notifications côté client -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     var notif = document.getElementById("notif");

@@ -11,6 +11,7 @@ $this->title = "Recherche de voyage";
     'class' => 'search-bar'
 ]) ?>
 
+<!-- Champ départ + suggestions -->
 <input type="text" name="depart" list="villesDepart"
        class="form-control search-input"
        placeholder="Ville de départ">
@@ -21,6 +22,7 @@ $this->title = "Recherche de voyage";
 <?php endforeach; ?>
 </datalist>
 
+<!-- Champ arrivée + suggestions -->
 <input type="text" name="arrivee" list="villesArrivee"
        class="form-control search-input"
        placeholder="Ville d’arrivée">
@@ -31,10 +33,12 @@ $this->title = "Recherche de voyage";
 <?php endforeach; ?>
 </datalist>
 
+<!-- Nombre de voyageurs -->
 <input type="number" name="voyageurs"
        class="form-control search-input"
        min="1" value="1">
 
+<!-- Option correspondances -->
 <div class="d-flex align-items-center ms-3 correspondance-wrapper">
     <input
         type="checkbox"
@@ -49,6 +53,7 @@ $this->title = "Recherche de voyage";
 </div>
 
 
+<!-- Bouton de soumission -->
 <button type="submit" class="btn btn-primary search-btn">
     Rechercher
 </button>
@@ -57,13 +62,14 @@ $this->title = "Recherche de voyage";
 </div>
 
 <!-- Conteneur des résultats (remplacé par la réponse AJAX) -->
- <!-- quand on clk sur rechercher ce div est remplace par le html envoye par le serveur -->
+<!-- Quand on clk sur rechercher ce div est remplace par le html envoye par le serveur -->
 <div
     id="resultats"
     class="row g-4 mt-4"
     data-details-url="<?= Url::to(['site/correspondance-details']) ?>"
     data-reserver-url="<?= \yii\helpers\Url::to(['site/reserver']) ?>">
     <?php if (!empty($resultats)): ?>
+        <!-- Rendu initial côté serveur -->
         <?= $this->render('_resultats', [ 
             'resultats' => $resultats,
             'depart' => $depart ?? null,

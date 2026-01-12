@@ -13,10 +13,12 @@ $this->title = 'Contact';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-contact">
+    <!-- Titre de la page -->
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
 
+        <!-- Message de confirmation -->
         <div class="alert alert-success">
             Thank you for contacting us. We will respond to you as soon as possible.
         </div>
@@ -34,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php else: ?>
 
+        <!-- Texte d’intro -->
         <p>
             If you have business inquiries or other questions, please fill out the following form to contact us.
             Thank you.
@@ -42,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-lg-5">
 
+                <!-- Formulaire de contact -->
                 <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
 
                     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
@@ -52,14 +56,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= $form->field($model, 'body')->textarea(['rows' => 6]) ?>
 
+                    <!-- Captcha anti-spam -->
                     <?= $form->field($model, 'verifyCode')->widget(Captcha::class, [
                         'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>',
                     ]) ?>
 
                     <div class="form-group">
+                        <!-- Bouton d’envoi -->
                         <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
                     </div>
 
+                <!-- Fin du formulaire -->
                 <?php ActiveForm::end(); ?>
 
             </div>

@@ -8,6 +8,7 @@ use yii\helpers\Url;
 ?>
 
 <?php
+// Calcule l'heure d'arrivée estimée.
 $formatArrivee = function ($heureDepart, $distanceKm) {
     $departMin = (int)$heureDepart * 60;
     $dureeMin = (int)round((float)$distanceKm);
@@ -76,6 +77,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                 continue;
             }
 
+            // Construit la chaîne de correspondances.
             $chain = [];
             $currentIdx = $idx;
 
@@ -123,6 +125,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
             }
 
             if (count($chain) >= 2) {
+                // Si au moins 2 segments, on crée une correspondance.
                 $ids = [];
                 foreach ($chain as $seg) {
                     if ($seg['v']) {
@@ -135,6 +138,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                     'nb' => $chain[0]['r']->nbplaceresa,
                 ];
             } else {
+                // Sinon, on garde en direct.
                 $direct[] = [
                     'r' => $segment['r'],
                     'v' => $segment['v'],
@@ -147,6 +151,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
     <?php if (!empty($direct) || !empty($corr)): ?>
         <div id="resultats" class="row g-4 mt-4" data-details-url="<?= Url::to(['site/correspondance-details']) ?>">
             <?php if (!empty($direct)): ?>
+                <!-- Section directes -->
                 <div class="row g-3">
                     <div class="col-12">
                         <h3 class="result-section-title">Réservations directes</h3>
@@ -170,10 +175,12 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                                                 <span class="bb-bar"></span>
                                             </div>
                                         </div>
+                                        <!-- Villes départ/arrivée -->
                                         <div class="bb-cities">
                                             <span><?= Html::encode($trajet->depart) ?></span>
                                             <span><?= Html::encode($trajet->arrivee) ?></span>
                                         </div>
+                                        <!-- Métadonnées -->
                                         <div class="result-meta">
                                             <div class="meta-row">
                                                 <span class="meta-label">Places reservees</span>
@@ -196,6 +203,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                                         </div>
                                     </div>
                                     <div class="card-footer mt-auto d-flex justify-content-between align-items-center px-3 py-2 result-footer">
+                                        <!-- Prix total -->
                                         <div class="result-price">
                                             <?= Html::encode(number_format(($trajet->distance ?? 0) * $v->tarif * $r->nbplaceresa, 2)) ?> €
                                         </div>
@@ -210,6 +218,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
             <?php endif; ?>
 
             <?php if (!empty($corr)): ?>
+                <!-- Section correspondances -->
                 <div class="row g-3 mt-3">
                     <div class="col-12">
                         <h3 class="result-section-title">Réservations avec correspondance</h3>
@@ -247,6 +256,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                                         $endTrajet = $t;
                                     }
 
+                                    // Etiquette correspondance(s)
                                     $nbCorr = max(count($segments) - 1, 1);
                                     $label = $nbCorr > 1 ? $nbCorr . ' correspondances' : 'Correspondance';
                                     $conducteurLabel = implode(' / ', array_unique($conducteurs));
@@ -291,6 +301,7 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
+                                                <!-- Toggle détails -->
                                                 <div class="result-toggle">Voir les details</div>
                                                 <div class="correspondance-inline d-none"></div>
                                             </div>
@@ -311,10 +322,12 @@ $formatArrivee = function ($heureDepart, $distanceKm) {
             <?php endif; ?>
         </div>
     <?php else: ?>
+        <!-- Aucun résultat -->
         <div class="empty-state">Aucune reservation pour le moment.</div>
     <?php endif; ?>
 
     <?php if (!$embedded): ?>
+        <!-- Retour profil si page complète -->
         <div class="mt-4">
             <a href="<?= Url::to(['site/profil']) ?>" class="btn btn-outline-light">Retour profil</a>
         </div>

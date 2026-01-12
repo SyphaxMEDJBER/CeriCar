@@ -18,8 +18,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <h1 class="login-title"><?= Html::encode($this->title) ?></h1>
         <p class="login-sub">Veuillez remplir les champs ci-dessous :</p>
+        <!-- Zone de notification (AJAX) -->
         <div class="alert auth-notif d-none"></div>
 
+        <!-- Début du formulaire -->
         <?php $form = ActiveForm::begin([ //un tableau d'option que yii utilise pour configurer le formulaire 
             'id' => 'login-form',//un identifiant 
             'fieldConfig' => [
@@ -30,22 +32,27 @@ $this->params['breadcrumbs'][] = $this->title;
            ]); 
         ?>
 
+            <!-- Identifiant -->
             <?= $form->field($model, 'username')
                 ->textInput(['autofocus' => true, 'placeholder' => "Nom d'utilisateur"]) ?>
 
+            <!-- Mot de passe -->
             <?= $form->field($model, 'password')
                 ->passwordInput(['placeholder' => "Mot de passe"]) ?>
 
+            <!-- Option mémorisation -->
             <?= $form->field($model, 'rememberMe')
                 ->checkbox(['label' => 'Se souvenir de moi', 'class' => 'remember-check']) ?>
 
             <div class="form-group mt-3">
+                <!-- Bouton de connexion -->
                 <?= Html::submitButton('Se connecter', [
                     'class' => 'btn btn-login',
                     'name' => 'login-button'
                 ]) ?>
             </div>
 
+        <!-- Fin du formulaire -->
         <?php ActiveForm::end(); ?>
 
     </div>
