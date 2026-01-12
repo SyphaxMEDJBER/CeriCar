@@ -1,0 +1,15 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Block direct access to non-public application directories/files.
+RewriteRule ^(assets|commands|config|controllers|mail|models|runtime|templates|tests|vagrant|vendor|views|widgets)(/|$) - [F,L]
+RewriteRule ^Diagrammes\ UML(/|$) - [F,L]
+RewriteRule ^(codeception\.yml|composer\.(json|lock)|docker-compose\.yml|LICENSE\.md|README\.md|requirements\.php|Vagrantfile|yii(\.bat)?)$ - [F,L]
+
+# Allow direct access to the public web root.
+RewriteRule ^web/ - [L]
+
+# Send all other requests to the public web root.
+RewriteRule ^$ web/ [L]
+RewriteRule ^(.*)$ web/$1 [L]
