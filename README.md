@@ -1,32 +1,32 @@
+# CERICar
 
-=======
-# CERICar – Application de covoiturage (Projet UML & Développement)
+Application web de covoiturage (UML + développement). Le projet s'inspire des plateformes de mise en relation conducteurs/passagers et met l'accent sur la modélisation et la mise en œuvre des parcours utilisateurs.
 
-CERICar est une application universitaire inspirée de BlaBlaCar, permettant à des utilisateurs 
-de rechercher des voyages, réserver une place, ou proposer un trajet lorsqu’ils disposent d’un permis.
+## Points clés
+- Parcours utilisateur complet : création de compte, recherche, réservation, proposition de trajet.
+- Modélisation UML structurée : cas d'utilisation, classes, séquences (et états si applicable).
+- Base de travail évolutive pour les futures parties back-end.
 
-Ce dépôt contient :
-- Les diagrammes UML (cas d'utilisation, classes, séquences…)
-- Le front-end du site (HTML + Tailwind)
-- Les futures parties back-end
-
----
-
-## 🚗 Fonctionnalités principales
-- Création de compte / Connexion
+## Fonctionnalités
+- Création de compte et authentification
 - Recherche de voyages
-- Réservation d’un voyage
+- Réservation d'un voyage
 - Consultation des réservations
-- Proposition d’un voyage (conducteur)
-- Profil utilisateur complet
+- Proposition d'un voyage (conducteur)
+- Gestion du profil utilisateur
 
----
+## Contenu du dépôt
+- Diagrammes UML (cas d'utilisation, classes, séquences, états)
+- Front-end du site (HTML + Tailwind)
+- Éléments back-end en cours/à venir
 
-## 🧩 Modélisation UML
-La modélisation comprend :
-- Diagramme de cas d’utilisation
-- Diagramme de classes
-- Diagrammes de séquence
-- Diagramme d’états (si applicable)
+## Structure rapide
+- `Diagrammes UML/` : livrables de modélisation
+- `templates/` et `views/` : interface utilisateur
+- `controllers/`, `models/`, `config/` : squelette applicatif
 
+## Statut du projet
+Projet finalisé.
 
+## Licence
+Voir `LICENSE.md`.
