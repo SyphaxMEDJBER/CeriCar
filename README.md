@@ -16,7 +16,7 @@ Ce dépôt contient :
 - Création de compte / Connexion
 - Recherche de voyages
 - Réservation d’un voyage
-- Consultation des réservations
+- Consultation des réservations/Voyages proposés
 - Proposition d’un voyage (conducteur)
 - Profil utilisateur complet
 
